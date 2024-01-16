@@ -1,60 +1,78 @@
 package com.example.garage.ui
 
+import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import coil.load
+import com.example.garage.DbIstance
 import com.example.garage.R
+import com.example.garage.databinding.FragmentCarDetailsBinding
+import com.example.garage.databinding.FragmentHomeBinding
+import com.example.garage.viewmodels.CarViewModel
+import com.example.garage.viewmodels.CarViewModelFactory
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [CarDetailsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CarDetailsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    val sharedViewModel: CarViewModel by activityViewModels {
+        CarViewModelFactory(
+            (activity?.application as DbIstance).database.CarDao() , Application()
+        )
     }
+    private lateinit var binding: FragmentCarDetailsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_car_details, container, false)
+        setHasOptionsMenu(false)
+        (activity as AppCompatActivity?)?.supportActionBar?.hide()
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_car_details, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CarDetailsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CarDetailsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        Log.d("ListData" , "${sharedViewModel.currentCar}")
+
+        val currentCar = sharedViewModel.currentCar
+
+        binding.carBrandDetails.text = currentCar[0].Brand
+        binding.carCubicCapacityDetails.text = currentCar[0].cubicCapacity
+        binding.carFuelDetails.text = currentCar[0].powerSupply
+        binding.carKmDetails.text = currentCar[0].km
+        binding.carDescriptionDetails.text = currentCar[0].description
+        binding.carYearDetails.text  =currentCar[0].year
+
+
+        binding.carModelDetails.text = currentCar[0].model
+        binding.carLogoDetails.load(currentCar[0].logo) {
+            crossfade(true)
+            placeholder(R.drawable.loading)
+            error(R.drawable.pictures)
+        }
+
+
+
+        binding.backArrow.setOnClickListener{
+            sharedViewModel.clearCurrentCar()
+            Log.d("StateCurrentCar" , "From details fragment: ${sharedViewModel.currentCar}")
+            findNavController().navigate(R.id.action_carDetailsFragment_to_homeFragment)
+        }
+
+
+
     }
+
+
+
 }

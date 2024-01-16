@@ -180,9 +180,94 @@
                     android:layout_height="match_parent"
                     android:inputType="textAutoComplete|textCapWords"
                     android:singleLine="true"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+
+            <ImageView
+                android:id="@+id/CarDescriptionIcon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat = "@drawable/description"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/car_description_label"
+                app:layout_constraintBottom_toBottomOf="@id/car_description_label"
+                />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/car_description_label"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="Description"
+                app:layout_constraintStart_toEndOf="@+id/CarDescriptionIcon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/car_km_label"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/car_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="textAutoComplete|textCapWords"
+                    android:singleLine="true"
+                    android:textStyle="bold"
+
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+            <ImageView
+                android:id="@+id/CarYearIcon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat = "@drawable/calendar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/car_year_label"
+                app:layout_constraintBottom_toBottomOf="@id/car_year_label"
+                />
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/car_year_label"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="Year"
+                app:layout_constraintStart_toEndOf="@+id/CarYearIcon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/car_description_label"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/car_year"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="textAutoComplete|textCapWords"
+                    android:singleLine="true"
+                    android:textStyle="bold"
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+
+
+
+
+
 
 
             <com.google.android.material.button.MaterialButton

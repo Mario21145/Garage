@@ -12,10 +12,8 @@ interface CarDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertCar(car: CarDb)
 
-    @Query("SELECT * FROM carDb")
+    @Query("SELECT * FROM cars")
     fun getCars() : List<CarDb>
-
-
 
 
 //    @Query("SELECT state FROM plantdb WHERE name = :name LIMIT 1")

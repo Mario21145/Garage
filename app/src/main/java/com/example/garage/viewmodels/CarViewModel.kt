@@ -1,8 +1,12 @@
 package com.example.garage.viewmodels
 
+import android.app.Application
+import android.text.Editable
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.garage.database.CarDao
 import com.example.garage.models.CarDb
@@ -10,8 +14,9 @@ import com.example.garage.models.RemoteCarData
 import com.example.garage.network.CarsApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class CarViewModel(dao: CarDao) : ViewModel() {
+class CarViewModel(private val carDao: CarDao, application: Application) : ViewModel() {
 
     enum class CarsApiStatus { DONE, ERROR, DEFAULT }
 
@@ -20,10 +25,14 @@ class CarViewModel(dao: CarDao) : ViewModel() {
     }
     val statusRequest: LiveData<CarsApiStatus> = _statusRequest
 
-    private val _carList = MutableLiveData<List<RemoteCarData>>()
-    val carList: MutableLiveData<List<RemoteCarData>> = _carList
+    private val _carLogos = MutableLiveData<List<RemoteCarData>>()
+    val carLogos: MutableLiveData<List<RemoteCarData>> = _carLogos
 
-    val carDao = dao
+    private val _carList = MutableLiveData<List<CarDb>>()
+    val carList: MutableLiveData<List<CarDb>> = _carList
+
+    private val _currentCar = mutableListOf<CarDb>()
+    val currentCar = _currentCar
 
     init {
         fetchCarData()
@@ -33,13 +42,13 @@ class CarViewModel(dao: CarDao) : ViewModel() {
         viewModelScope.launch(Dispatchers.Main) {
             while (_statusRequest.value != CarsApiStatus.DONE) {
                 try {
-                    _carList.value = CarsApi.retrofitService.getCarList().cars
-                    if (_carList.value!!.isNotEmpty()) {
+                    _carLogos.value = CarsApi.retrofitService.getCarList().cars
+                    if (_carLogos.value!!.isNotEmpty()) {
                         _statusRequest.value = CarsApiStatus.DONE
                     }
                 } catch (e: Exception) {
                     _statusRequest.value = CarsApiStatus.ERROR
-                    _carList.value = listOf()
+                    _carLogos.value = listOf()
                 }
             }
         }
@@ -47,21 +56,49 @@ class CarViewModel(dao: CarDao) : ViewModel() {
 
     //CRUD OPERATIONS
     fun insertCar(
-        name: String,
+        model: String,
+        brand: String,
         cubicCapacity: String,
         powerSupply: String,
-        model: String,
-        km: Int
+        km: String,
+        description: String,
+        year : String,
+        logo: String,
     ) {
-        val carDb = CarDb(
-            name = name,
-            cubicCapacity = cubicCapacity,
-            powerSupply = powerSupply,
-            model = model,
-            km = km
-        )
+        val carDb = CarDb(model, brand, cubicCapacity, powerSupply, km, description , year , logo)
         carDao.insertCar(carDb)
     }
 
+    fun getCars() {
+        viewModelScope.launch(Dispatchers.Main) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val cars = carDao.getCars()
+                viewModelScope.launch(Dispatchers.Main) {
+                    _carList.value = cars
+                    Log.d("Data" , "Data db: ${_carList.value}")
+                }
+            }
+        }
+    }
 
+    fun setCurrentCar(car : CarDb){
+        _currentCar.add(car)
+    }
+
+    fun clearCurrentCar(){
+        currentCar.clear()
+    }
+
+}
+
+
+class CarViewModelFactory(private val carDao: CarDao, private val application: Application) :
+    ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return if (modelClass.isAssignableFrom(CarViewModel::class.java)) {
+            CarViewModel(carDao, application) as T
+        } else {
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
+    }
 }
