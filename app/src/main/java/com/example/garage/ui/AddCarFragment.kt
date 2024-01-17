@@ -48,21 +48,48 @@ class AddCarFragment : Fragment() {
 
         val dataSet = Dataset()
 
+        val adapterFuels = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            dataSet.typeFuels
+        )
+        binding.filledExposedDropdownFuel.setAdapter(adapterFuels)
+
+        val carYearLabel = binding.carYearLabel
+        val carYear = carYearLabel.editText?.text
+
 
         //Text inputs
+        lateinit var carBrand : String
+        lateinit var carFuel : String
+        lateinit var logo : String
+        carBrand = ""
+        carFuel = ""
+        logo = ""
+
+
         val carModelLabel = binding.carNameLabel
         val carModel = carModelLabel.editText?.text
 
-        var carBrand = ""
         val dropdownBrand = binding.filledExposedDropdownBrand
-        dropdownBrand.setOnItemClickListener { _, _, position, _ ->
-           carBrand = dropdownBrand.adapter.getItem(position).toString()
+        sharedViewModel.carLogos.observe(viewLifecycleOwner) { carList ->
+            val adapterBrand = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                carList.map { it.name }
+            )
+            binding.filledExposedDropdownBrand.setAdapter(adapterBrand)
+
+            binding.filledExposedDropdownBrand.setOnItemClickListener { _, _, position, _ ->
+                val selectedCar = carList[position]
+                logo = selectedCar.logo
+                carBrand = dropdownBrand.adapter.getItem(position).toString()
+            }
         }
 
         val carCubicCapacityLabel = binding.carCubicCapacityLabel
         val carCubicCapacity = carCubicCapacityLabel.editText?.text
 
-        var carFuel = ""
         val dropdownFuel = binding.filledExposedDropdownFuel
         dropdownFuel.setOnItemClickListener { _, _, position, _ ->
             carFuel = dropdownFuel.adapter.getItem(position).toString()
@@ -75,34 +102,6 @@ class AddCarFragment : Fragment() {
         val carDescription = carDescriptionLabel.editText?.text
 
 
-        var logo = ""
-        sharedViewModel.carLogos.observe(viewLifecycleOwner) { carList ->
-            val adapterBrand = ArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_spinner_dropdown_item,
-                carList.map { it.name }
-            )
-            binding.filledExposedDropdownBrand.setAdapter(adapterBrand)
-
-            binding.filledExposedDropdownBrand.setOnItemClickListener { _, _, position, _ ->
-                val selectedCar = carList[position]
-                logo = selectedCar.logo
-            }
-
-        }
-
-        val adapterFuels = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            dataSet.typeFuels
-        )
-        binding.filledExposedDropdownFuel.setAdapter(adapterFuels)
-
-        val carYearLabel = binding.carYearLabel
-        val carYear = carYearLabel.editText?.text
-
-
-
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -113,6 +112,8 @@ class AddCarFragment : Fragment() {
             }
             findNavController().navigate(R.id.action_addCarFragment_to_homeFragment)
         }
+        //Icon dark Mode
+
 
     }
 

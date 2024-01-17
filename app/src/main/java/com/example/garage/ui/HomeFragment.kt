@@ -56,7 +56,6 @@ class HomeFragment : Fragment() {
         sharedViewModel.carList.observe(viewLifecycleOwner){ cars ->
         val adapter = CarAdapter(sharedViewModel){car ->
                 sharedViewModel.setCurrentCar(car)
-                Log.d("StateCurrentCar" , "From home fragment: ${sharedViewModel.currentCar}")
                 findNavController().navigate(R.id.action_homeFragment_to_carDetailsFragment)
             }
             binding.HomeRecyclerView.adapter = adapter

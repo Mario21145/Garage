@@ -1,5 +1,6 @@
 package com.example.garage.models
 
+import android.text.Editable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -75,9 +75,20 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
                 val cars = carDao.getCars()
                 viewModelScope.launch(Dispatchers.Main) {
                     _carList.value = cars
-                    Log.d("Data" , "Data db: ${_carList.value}")
                 }
             }
+        }
+    }
+
+    fun deleteCar(car : CarDb){
+        viewModelScope.launch(Dispatchers.IO) {
+            carDao.deleteCar(car)
+        }
+    }
+
+    fun updateCar(car: CarDb){
+        viewModelScope.launch(Dispatchers.IO) {
+            carDao.updateCar(car)
         }
     }
 
