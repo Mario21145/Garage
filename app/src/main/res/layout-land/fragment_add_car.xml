@@ -39,9 +39,9 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/car_name_label"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="170dp"
+                android:layout_width="400dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
                 android:hint="car model"
                 app:layout_constraintStart_toEndOf="@id/carModelIcon"
@@ -63,7 +63,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/car_brand_label"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="130dp"
+                android:layout_width="290dp"
                 android:layout_height="wrap_content"
                 android:hint="Brand"
                 android:orientation="vertical"
@@ -98,10 +98,11 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
                 android:hint="cubic capacity"
                 app:layout_constraintStart_toEndOf="@+id/cubicCapacityIcon"
-                app:layout_constraintEnd_toEndOf="parent"
+
                 app:layout_constraintTop_toBottomOf="@id/car_name_label"
                 >
 
@@ -123,7 +124,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 app:srcCompat = "@drawable/fuel"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/car_cubic_capacity_label"
                 app:layout_constraintTop_toTopOf="@+id/car_fuel_label"
                 app:layout_constraintBottom_toBottomOf="@+id/car_fuel_label"
                 />
@@ -133,12 +135,14 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+
                 android:hint="fuel"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/carFuelIcon"
-                app:layout_constraintTop_toBottomOf="@id/car_cubic_capacity_label">
+                app:layout_constraintTop_toTopOf="@id/car_cubic_capacity_label"
+                app:layout_constraintBottom_toBottomOf="@+id/car_cubic_capacity_label"
+                >
 
                 <AutoCompleteTextView
                     android:id="@+id/filled_exposed_dropdown_fuel"
@@ -167,10 +171,10 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
                 android:hint="km"
                 app:layout_constraintStart_toEndOf="@+id/carKmIcon"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/car_fuel_label"
                 >
 
@@ -193,8 +197,9 @@
                 android:id="@+id/CarDescriptionIcon"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_marginStart="10dp"
                 app:srcCompat = "@drawable/description"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/car_km_label"
                 app:layout_constraintTop_toTopOf="@id/car_description_label"
                 app:layout_constraintBottom_toBottomOf="@id/car_description_label"
                 />
@@ -204,11 +209,12 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+
                 android:hint="Description"
                 app:layout_constraintStart_toEndOf="@+id/CarDescriptionIcon"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/car_km_label"
+                app:layout_constraintTop_toTopOf="@id/car_km_label"
+                app:layout_constraintBottom_toBottomOf="@id/car_km_label"
                 >
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -240,7 +246,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/car_year_label"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="300dp"
+                android:layout_width="690dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:hint="Year"
