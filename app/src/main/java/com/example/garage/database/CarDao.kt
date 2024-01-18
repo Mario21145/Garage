@@ -20,7 +20,7 @@ interface CarDao {
     @Delete
     fun deleteCar(item : CarDb)
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
+    @Update
     fun updateCar(car: CarDb)
 
 

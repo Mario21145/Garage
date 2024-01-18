@@ -13,6 +13,7 @@ import com.example.garage.models.CarDb
 import com.example.garage.models.RemoteCarData
 import com.example.garage.network.CarsApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -31,8 +32,8 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
     private val _carList = MutableLiveData<List<CarDb>>()
     val carList: MutableLiveData<List<CarDb>> = _carList
 
-    private val _currentCar = mutableListOf<CarDb>()
-    val currentCar = _currentCar
+    private val _uptadedcar = MutableLiveData<List<CarDb>>()
+    val updatedCar: MutableLiveData<List<CarDb>> = _uptadedcar
 
     init {
         fetchCarData()
@@ -65,7 +66,7 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
         year : String,
         logo: String,
     ) {
-        val carDb = CarDb(model, brand, cubicCapacity, powerSupply, km, description , year , logo)
+        val carDb = CarDb(null ,model, brand, cubicCapacity, powerSupply, km, description , year , logo)
         carDao.insertCar(carDb)
     }
 
@@ -86,18 +87,30 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
         }
     }
 
-    fun updateCar(car: CarDb){
+    fun updateCar(car: CarDb) {
         viewModelScope.launch(Dispatchers.IO) {
-            carDao.updateCar(car)
+
+            try {
+                carDao.updateCar(car)
+                Log.d("CarViewModel", "Car updated: $car")
+
+            } catch (e: Exception) {
+                Log.d("CarViewModel", "Error updating car: $e")
+            }
+
         }
     }
 
     fun setCurrentCar(car : CarDb){
-        _currentCar.add(car)
+        viewModelScope.launch(Dispatchers.Main) {
+            updatedCar.value = listOf(car)
+        }
     }
 
     fun clearCurrentCar(){
-        currentCar.clear()
+        viewModelScope.launch(Dispatchers.Main) {
+            updatedCar.value = listOf()
+        }
     }
 
 }

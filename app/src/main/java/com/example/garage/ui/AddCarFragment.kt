@@ -1,6 +1,8 @@
 package com.example.garage.ui
 
 import android.app.Application
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -113,7 +115,16 @@ class AddCarFragment : Fragment() {
             findNavController().navigate(R.id.action_addCarFragment_to_homeFragment)
         }
         //Icon dark Mode
+        val isDarkTheme = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
+        if(isDarkTheme){
+            binding.carModelIcon.setColorFilter(Color.argb(255, 255, 255, 255))
+            binding.cubicCapacityIcon.setColorFilter(Color.argb(255, 255, 255, 255))
+            binding.carFuelIcon.setColorFilter(Color.argb(255, 255, 255, 255))
+            binding.carKmIcon.setColorFilter(Color.argb(255, 255, 255, 255))
+            binding.CarDescriptionIcon.setColorFilter(Color.argb(255, 255, 255, 255))
+            binding.CarYearIcon.setColorFilter(Color.argb(255, 255, 255, 255))
+        }
 
     }
 
