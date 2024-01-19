@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -35,7 +36,9 @@ class AddCarFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
+        setHasOptionsMenu(false)
+        (activity as AppCompatActivity?)?.supportActionBar?.hide()
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_car, container, false)
         return binding.root
     }
@@ -109,11 +112,16 @@ class AddCarFragment : Fragment() {
         }
 
         binding.InsertButton.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                sharedViewModel.insertCar(carModel.toString() , carBrand , carCubicCapacity.toString() , carFuel , carKm.toString() , carDescription.toString() , carYear.toString() , logo)
+            if(carModel!!.isNotEmpty() && carBrand.isNotEmpty() && carCubicCapacity!!.isNotEmpty() && carFuel.isNotEmpty() && carKm!!.isNotEmpty() && carDescription!!.isNotEmpty() && carYear!!.isNotEmpty()){
+                lifecycleScope.launch(Dispatchers.IO) {
+                    sharedViewModel.insertCar(carModel.toString() , carBrand , carCubicCapacity.toString() , carFuel , carKm.toString() , carDescription.toString() , carYear.toString() , logo)
+                }
+                findNavController().navigate(R.id.action_addCarFragment_to_homeFragment)
+            } else {
+                context?.let { it1 -> sharedViewModel.makeToast(it1, getString(R.string.toastErrorFieldEmpty) , 30 ) }
             }
-            findNavController().navigate(R.id.action_addCarFragment_to_homeFragment)
         }
+
         //Icon dark Mode
         val isDarkTheme = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 

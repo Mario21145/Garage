@@ -1,8 +1,9 @@
 package com.example.garage.viewmodels
 
 import android.app.Application
-import android.text.Editable
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,9 +14,7 @@ import com.example.garage.models.CarDb
 import com.example.garage.models.RemoteCarData
 import com.example.garage.network.CarsApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class CarViewModel(private val carDao: CarDao, application: Application) : ViewModel() {
 
@@ -112,6 +111,21 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
             updatedCar.value = listOf()
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+    fun makeToast(context: Context, msg: String, duration: Int) {
+        Toast.makeText(context, msg, duration).show()
+    }
+
 
 }
 

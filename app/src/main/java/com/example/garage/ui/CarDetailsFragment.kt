@@ -20,6 +20,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import coil.load
 import com.example.garage.DbIstance
 import com.example.garage.R
@@ -28,11 +32,13 @@ import com.example.garage.datasets.Dataset
 import com.example.garage.models.CarDb
 import com.example.garage.viewmodels.CarViewModel
 import com.example.garage.viewmodels.CarViewModelFactory
+import com.example.garage.workers.CarServiceRememberWorker
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 
 class CarDetailsFragment : Fragment() {
@@ -59,20 +65,19 @@ class CarDetailsFragment : Fragment() {
 
         binding.apply {
             viewModel = sharedViewModel
-            detailFragment = this@CarDetailsFragment
             lifecycleOwner = viewLifecycleOwner
-
         }
 
         val currentCar = sharedViewModel.updatedCar
+
         sharedViewModel.updatedCar.observe(viewLifecycleOwner) {
             if(it.isNotEmpty()) {
-                binding.carBrandDetails.text = it[0].model
-                binding.carCubicCapacityDetails.text = it[0].cubicCapacity
-                binding.carFuelDetails.text = it[0].powerSupply
-                binding.carKmDetails.text = it[0].km
-                binding.carDescriptionDetails.text = it[0].description
-                binding.carYearDetails.text = it[0].year
+                binding.carBrandDetails.text = getString(R.string.model , it[0].model)
+                binding.carCubicCapacityDetails.text = getString(R.string.cubicCapacity , it[0].cubicCapacity)
+                binding.carFuelDetails.text = getString(R.string.fuel , it[0].powerSupply)
+                binding.carKmDetails.text = getString(R.string.km , it[0].km)
+                binding.carDescriptionDetails.text = getString(R.string.description , it[0].description)
+                binding.carYearDetails.text = getString(R.string.year , it[0].year)
                 binding.carModelDetails.text = it[0].model
 
                 binding.carLogoDetails.load(it[0].logo) {
@@ -85,7 +90,8 @@ class CarDetailsFragment : Fragment() {
         }
 
 
-        binding.backArrow.setOnClickListener {
+        binding.backArrow?.setOnClickListener {
+
             if (binding.deleteCar.visibility == INVISIBLE && binding.editCar.visibility == INVISIBLE) {
                 binding.deleteCar.visibility = VISIBLE
                 binding.editCar.visibility = VISIBLE
@@ -96,11 +102,12 @@ class CarDetailsFragment : Fragment() {
             } else {
                 findNavController().navigate(R.id.action_carDetailsFragment_to_homeFragment)
             }
+
         }
 
         binding.deleteCar.setOnClickListener {
             val builder = AlertDialog.Builder(requireContext())
-                .setTitle("You want to delete your car?")
+                .setTitle(R.string.deleteDialogTitle)
                 .setPositiveButton("OK") { dialog, which ->
                     sharedViewModel.deleteCar(currentCar.value!![0])
                     sharedViewModel.clearCurrentCar()
