@@ -4,13 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable
-            name="detailFragment"
-            type="com.example.garage.ui.CarDetailsFragment" />
-
-        <variable
-            name="viewModel"
-            type="com.example.garage.viewmodels.CarViewModel" />
 
     </data>
 

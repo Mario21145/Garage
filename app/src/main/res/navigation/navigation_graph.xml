@@ -11,11 +11,11 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_homeFragment_to_carFragment"
-            app:destination="@id/carFragment" />
-        <action
             android:id="@+id/action_homeFragment_to_addCarFragment"
             app:destination="@id/addCarFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_carDetailsFragment"
+            app:destination="@id/carDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/carDetailsFragment"
@@ -29,13 +29,13 @@
     <fragment
         android:id="@+id/carFragment"
         android:name="com.example.garage.ui.CarFragment"
-        android:label="CarFragment" >
-        <action
-            android:id="@+id/action_carFragment_to_carDetailsFragment"
-            app:destination="@id/carDetailsFragment" />
-    </fragment>
+        android:label="CarFragment" />
     <fragment
         android:id="@+id/addCarFragment"
         android:name="com.example.garage.ui.AddCarFragment"
-        android:label="AddCarFragment" />
+        android:label="AddCarFragment" >
+        <action
+            android:id="@+id/action_addCarFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>

@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.garage.models.CarDb
 
-@Database(entities = [CarDb::class], version = 1 , exportSchema = false)
+@Database(entities = [CarDb::class], version = 2 , exportSchema = false)
 abstract class CarDatabase: RoomDatabase() {
     abstract fun CarDao(): CarDao
 
