@@ -12,7 +12,7 @@ class Dataset {
         if (language == "it") {
             listOf("benzina", "ibrida completa", "ibrida leggera", "ibrida plug-in", "diesel")
         } else {
-            listOf("petrol", "full-hybrid", "mild-hybrid", "plugin-hybrid", "diesel")
+            listOf("gasoline", "full-hybrid", "mild-hybrid", "plugin-hybrid", "diesel")
         }
     }
 }

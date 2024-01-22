@@ -2,6 +2,7 @@ package com.example.garage.viewmodels
 
 import android.app.Application
 import android.content.Context
+import android.provider.Settings.System.getString
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
@@ -9,12 +10,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.example.garage.R
 import com.example.garage.database.CarDao
 import com.example.garage.models.CarDb
+import com.example.garage.models.NotificationDb
 import com.example.garage.models.RemoteCarData
 import com.example.garage.network.CarsApi
+import com.example.garage.workers.CarServiceRememberWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class CarViewModel(private val carDao: CarDao, application: Application) : ViewModel() {
 
@@ -34,10 +43,17 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
     private val _uptadedcar = MutableLiveData<List<CarDb>>()
     val updatedCar: MutableLiveData<List<CarDb>> = _uptadedcar
 
+    private val _notifications = MutableLiveData<List<NotificationDb>>()
+    val notifications: MutableLiveData<List<NotificationDb>> = _notifications
+
+
     init {
         fetchCarData()
     }
 
+
+
+    //Logos from github repository for the cars
     fun fetchCarData() {
         viewModelScope.launch(Dispatchers.Main) {
             while (_statusRequest.value != CarsApiStatus.DONE) {
@@ -54,7 +70,7 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
         }
     }
 
-    //CRUD OPERATIONS
+    //CRUD OPERATIONS CARS
     fun insertCar(
         model: String,
         brand: String,
@@ -88,15 +104,11 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
 
     fun updateCar(car: CarDb) {
         viewModelScope.launch(Dispatchers.IO) {
-
             try {
                 carDao.updateCar(car)
-                Log.d("CarViewModel", "Car updated: $car")
-
             } catch (e: Exception) {
                 Log.d("CarViewModel", "Error updating car: $e")
             }
-
         }
     }
 
@@ -114,6 +126,66 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
 
 
 
+    // CRUD OPERATIONS NOTIFICATIONS
+    fun getNotifications() {
+        viewModelScope.launch(Dispatchers.Main) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val notifications = carDao.getNotifications()
+                viewModelScope.launch(Dispatchers.Main) {
+                    _notifications.value = notifications
+                }
+            }
+        }
+    }
+
+    fun clearNotifications(){
+        viewModelScope.launch(Dispatchers.IO) {
+            carDao.deleteAllNotifications()
+        }
+    }
+
+    fun deleteNotification(notification: NotificationDb){
+        viewModelScope.launch(Dispatchers.IO) {
+            carDao.deleteNotification(notification)
+            carDao.getNotifications()
+        }
+    }
+
+    //WORKER
+    fun scheduleReminder(context: Context , currentCar : CarDb , km : String) {
+
+            val resultKm = currentCar.km.toInt() - km.toInt()
+            Log.d("State" , "Result km : $resultKm")
+
+            if(resultKm >= 20000){
+
+                Log.d("Data" , "${currentCar.Brand} + ${currentCar.model}")
+
+                val inputData = Data.Builder()
+                    .putString(CarServiceRememberWorker.brandKey, currentCar.Brand)
+                    .putString(CarServiceRememberWorker.nameKey, currentCar.model)
+                    .build()
+
+                val workRequest = OneTimeWorkRequestBuilder<CarServiceRememberWorker>()
+                    .setInputData(inputData)
+                    .build()
+
+                WorkManager.getInstance().enqueueUniqueWork(
+                    "carServiceReminderWork",
+                    ExistingWorkPolicy.KEEP,
+                    workRequest
+                )
+
+                val notification = NotificationDb(currentCar.model, context.getString(R.string.notificationDbTextDescription))
+                carDao.insertNotification(notification)
+            }
+    }
+
+
+
+
+
+
 
 
 
@@ -125,12 +197,10 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
     fun makeToast(context: Context, msg: String, duration: Int) {
         Toast.makeText(context, msg, duration).show()
     }
-
-
 }
 
 
-class CarViewModelFactory(private val carDao: CarDao, private val application: Application) :
+class CarViewModelFactory(private val carDao: CarDao, val application: Application) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(CarViewModel::class.java)) {

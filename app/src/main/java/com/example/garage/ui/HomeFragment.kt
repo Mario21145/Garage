@@ -42,7 +42,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
-        (activity as AppCompatActivity?)?.supportActionBar?.show()
+        (activity as AppCompatActivity?)?.supportActionBar?.hide()
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         return binding.root
     }
@@ -55,34 +55,68 @@ class HomeFragment : Fragment() {
             lifecycleOwner = this@HomeFragment
         }
 
-        val slidingPaneLayout = binding.slidingPaneLayout
-        slidingPaneLayout?.lockMode = SlidingPaneLayout.LOCK_MODE_LOCKED
-        slidingPaneLayout?.let { CarsListOnBackPressedCallback(it) }?.let {
+
+        //CarDetails sliding pane layout only for large display
+        val slidingPaneLayoutCar = binding.slidingPaneLayoutCarDetails
+        slidingPaneLayoutCar?.lockMode = SlidingPaneLayout.LOCK_MODE_LOCKED
+        slidingPaneLayoutCar?.let { CarsListOnBackPressedCallback(it) }?.let {
             requireActivity().onBackPressedDispatcher.addCallback(
                 viewLifecycleOwner,
                 it
             )
         }
 
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(callback)
+
+
 
         sharedViewModel.getCars()
         sharedViewModel.carList.observe(viewLifecycleOwner) { cars ->
+
+            if (resources.configuration.screenWidthDp > 600) {
+                if (sharedViewModel.carList.value!!.isNotEmpty()) {
+                    sharedViewModel.setCurrentCar(cars[0])
+                }
+            }
+
             val adapter = CarAdapter(sharedViewModel) { car ->
-                sharedViewModel.setCurrentCar(car)
-
-                val slidingPanellayout = binding.slidingPaneLayout
+                val slidingPanelayoutCar = binding.slidingPaneLayoutCarDetails
                 val slidingPanel = binding.HomeRecyclerView
-
                 if (resources.configuration.screenWidthDp > 600) {
                     slidingPanel.visibility = View.VISIBLE
-                    slidingPanellayout?.openPane()
+                    slidingPanelayoutCar?.openPane()
+                    sharedViewModel.setCurrentCar(car)
                 } else {
-                    binding.slidingPaneLayout?.visibility = View.GONE
+                    binding.slidingPaneLayoutCarDetails?.visibility = View.GONE
+                    sharedViewModel.setCurrentCar(car)
                     findNavController().navigate(R.id.action_homeFragment_to_carDetailsFragment)
                 }
             }
+
             binding.HomeRecyclerView.adapter = adapter
         }
+
+        sharedViewModel.getNotifications()
+        sharedViewModel.notifications.observe(viewLifecycleOwner){
+
+            val size = it.size
+            if(size == 0){
+                binding.notificationCounter?.visibility  = View.GONE
+            } else {
+                binding.notificationCounter?.visibility  = View.VISIBLE
+                binding.notificationCounter?.text = size.toString()
+            }
+        }
+
+
+
+
+
 
         binding.AddCar.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_addCarFragment)
@@ -93,13 +127,11 @@ class HomeFragment : Fragment() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 val list = mutableListOf<CarDb>()
                 if (query != null) {
-
                     for (i in sharedViewModel.carList.value!!) {
                         if (i.model.contains(query, true)) {
                             list.add(i)
                         }
                     }
-
                     sharedViewModel.carList.value = list
                 }
                 return true
@@ -112,14 +144,15 @@ class HomeFragment : Fragment() {
         })
 
         binding.SearchCar.setOnCloseListener {
-            val imm =
-                view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
             sharedViewModel.getCars()
             true
         }
 
-
+        binding.notificationIcon?.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_notificationFragment)
+        }
     }
 }
 

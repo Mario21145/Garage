@@ -122,7 +122,7 @@ class AddCarFragment : Fragment() {
             }
         }
 
-        //Icon dark Mode
+        //Icons dark Mode
         val isDarkTheme = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
         if(isDarkTheme){

@@ -9,12 +9,17 @@
             name="viewModel"
             type="com.example.garage.viewmodels.CarViewModel" />
 
+
+
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.HomeFragment">
+        tools:context=".ui.NotificationFragment">
+
+
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -44,10 +49,10 @@
                         />
 
                     <TextView
-                        android:id="@+id/appName"
+                        android:id="@+id/introductionText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/app_name"
+                        android:text="@string/yourNotification"
                         android:textSize="30sp"
                         android:textStyle="bold"
                         android:textColor="@color/white"
@@ -57,71 +62,57 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         />
 
-                    <TextView
-                        android:id="@+id/notificationCounter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="30sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
-                        android:layout_marginEnd="10sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/notificationIcon"
-                        app:layout_constraintEnd_toStartOf="@id/notificationIcon"
-                        app:layout_constraintTop_toTopOf="@+id/notificationIcon"
-                        tools:text="1"
-                        android:visibility="gone"
-                        />
-
-                    <ImageView
-                        android:id="@+id/notificationIcon"
-                        android:layout_width="30sp"
-                        android:layout_height="30sp"
-                        android:src="@drawable/notification"
-                        android:layout_margin="10dp"
+                    <ImageButton
+                        android:id="@+id/deleteAllNotification"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="20dp"
+                        android:background="@android:color/transparent"
+                        android:cropToPadding="true"
+                        android:src="@drawable/icons8_cestino_30"
+                        app:layout_constraintBottom_toBottomOf="@+id/introductionText"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/introductionText"
                         app:tint="@color/white" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </com.google.android.material.appbar.AppBarLayout>
 
+
+
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/HomeRecyclerView"
+                android:id="@+id/notificationRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/topBar"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/topBar" />
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
+
+
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/AddCar"
+                android:id="@+id/backArrow"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 app:fabCustomSize="50dp"
-                android:src="@drawable/plus"
-                app:tint="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/arrow"
+                app:tint ="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_margin="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_margin="10dp"
                 />
-
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/SearchCar"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:background="@drawable/shape_search_car"
-                android:backgroundTint="@color/material_dynamic_primary80"
-                android:inputType="text"
-                app:layout_constraintTop_toTopOf="@+id/AddCar"
-                app:layout_constraintBottom_toBottomOf="@+id/AddCar"
-                app:layout_constraintEnd_toEndOf="parent"
-                />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
 
     </FrameLayout>
 </layout>

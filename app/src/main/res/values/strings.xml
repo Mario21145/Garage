@@ -23,5 +23,12 @@
     <string name="yourDetails">Your car details</string>
     <string name="toastErrorFieldEmpty">Compile all the fields!</string>
 
+    <string name="yourNotification">Your notifications</string>
+
+    <string name="notificationTextTitle">Check me!</string>
+    <string name="notificationTextDescription">Some actions to do on: %1$s %2$s</string>
+
+    <string name="notificationDbTextDescription">To do a car service</string>
+
 
 </resources>

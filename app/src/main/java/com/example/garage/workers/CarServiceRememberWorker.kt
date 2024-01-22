@@ -1,11 +1,16 @@
 package com.example.garage.workers
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.Settings.System.getString
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -17,6 +22,7 @@ import com.example.garage.repository.Preferences
 
 class CarServiceRememberWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
+    @SuppressLint("MissingPermission")
     override fun doWork(): Result {
 
         val intent = Intent(applicationContext, MainActivity::class.java).apply {
@@ -25,37 +31,32 @@ class CarServiceRememberWorker(context: Context, workerParams: WorkerParameters)
 
         val pendingIntent : PendingIntent = PendingIntent.getActivity(applicationContext , 0 , intent, PendingIntent.FLAG_IMMUTABLE)
         val carName = inputData.getString(nameKey)
-        val builder = NotificationCompat.Builder(applicationContext, "Notification")
-            .setSmallIcon(R.drawable.fuel)
-            .setContentTitle("Check me!")
-            .setContentText("It's time to check $carName car")
+        val carBrand = inputData.getString(brandKey)
+        val title = applicationContext.getString(R.string.notificationTextTitle)
+        val description = applicationContext.getString(R.string.notificationTextDescription , carBrand , carName)
+        val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+            .setSmallIcon(R.drawable.engine)
+            .setContentTitle(title)
+            .setContentText(description)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
 
         val notificationId = Preferences.getNotificationIdCounter(applicationContext)
 
-        val NOTIFICATION_PERMISSION_REQUEST_CODE = 156
-
         with(NotificationManagerCompat.from(applicationContext)) {
-
-            if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(
-                    applicationContext as Activity,
-                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                    NOTIFICATION_PERMISSION_REQUEST_CODE
-                )
-            }
-
             notify(notificationId, builder.build())
         }
 
         Preferences.incrementAndSaveNotificationIdCounter(applicationContext)
+
         return Result.success()
     }
 
     companion object {
         val nameKey = "carServiceWorker"
+        val brandKey = "carServiceBrand"
+        val CHANNEL_ID = "car_reminder_id"
     }
 
 }

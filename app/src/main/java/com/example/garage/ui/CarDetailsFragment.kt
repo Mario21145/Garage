@@ -2,10 +2,10 @@ package com.example.garage.ui
 
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -14,31 +14,23 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.work.Data
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import coil.load
 import com.example.garage.DbIstance
 import com.example.garage.R
 import com.example.garage.databinding.FragmentCarDetailsBinding
 import com.example.garage.datasets.Dataset
 import com.example.garage.models.CarDb
+import com.example.garage.models.NotificationDb
 import com.example.garage.viewmodels.CarViewModel
 import com.example.garage.viewmodels.CarViewModelFactory
-import com.example.garage.workers.CarServiceRememberWorker
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 
 class CarDetailsFragment : Fragment() {
@@ -70,28 +62,52 @@ class CarDetailsFragment : Fragment() {
 
         val currentCar = sharedViewModel.updatedCar
 
-        sharedViewModel.updatedCar.observe(viewLifecycleOwner) {
-            if(it.isNotEmpty()) {
-                binding.carBrandDetails.text = getString(R.string.model , it[0].model)
-                binding.carCubicCapacityDetails.text = getString(R.string.cubicCapacity , it[0].cubicCapacity)
-                binding.carFuelDetails.text = getString(R.string.fuel , it[0].powerSupply)
-                binding.carKmDetails.text = getString(R.string.km , it[0].km)
-                binding.carDescriptionDetails.text = getString(R.string.description , it[0].description)
-                binding.carYearDetails.text = getString(R.string.year , it[0].year)
-                binding.carModelDetails.text = it[0].model
+        sharedViewModel.carList.observe(viewLifecycleOwner) {
+            if (resources.configuration.screenWidthDp > 600) {
 
-                binding.carLogoDetails.load(it[0].logo) {
+                if(sharedViewModel.carList.value.isNullOrEmpty()){
+                    binding.root.visibility = GONE
+                } else {
+                    binding.root.visibility = VISIBLE
+                    if (it.isNotEmpty()) {
+                        binding.carBrandDetails.text = getString(R.string.model, it[0].model)
+                        binding.carCubicCapacityDetails.text = getString(R.string.cubicCapacity, it[0].cubicCapacity)
+                        binding.carFuelDetails.text = getString(R.string.fuel, it[0].powerSupply)
+                        binding.carKmDetails.text = getString(R.string.km, it[0].km)
+                        binding.carDescriptionDetails.text = getString(R.string.description, it[0].description)
+                        binding.carYearDetails.text = getString(R.string.year, it[0].year)
+                        binding.carModelDetails?.text = it[0].model
+                        binding.carLogoDetails?.load(it[0].logo) {
+                            crossfade(true)
+                            placeholder(R.drawable.loading)
+                            error(R.drawable.pictures)
+                        }
+                    }
+                }
+            }
+        }
+
+
+        sharedViewModel.updatedCar.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                binding.carBrandDetails.text = getString(R.string.model, it[0].model)
+                binding.carCubicCapacityDetails.text = getString(R.string.cubicCapacity, it[0].cubicCapacity)
+                binding.carFuelDetails.text = getString(R.string.fuel, it[0].powerSupply)
+                binding.carKmDetails.text = getString(R.string.km, it[0].km)
+                binding.carDescriptionDetails.text = getString(R.string.description, it[0].description)
+                binding.carYearDetails.text = getString(R.string.year, it[0].year)
+                binding.carModelDetails?.text = it[0].model
+
+                binding.carLogoDetails?.load(it[0].logo) {
                     crossfade(true)
                     placeholder(R.drawable.loading)
                     error(R.drawable.pictures)
                 }
             }
-
         }
 
 
         binding.backArrow?.setOnClickListener {
-
             if (binding.deleteCar.visibility == INVISIBLE && binding.editCar.visibility == INVISIBLE) {
                 binding.deleteCar.visibility = VISIBLE
                 binding.editCar.visibility = VISIBLE
@@ -102,16 +118,23 @@ class CarDetailsFragment : Fragment() {
             } else {
                 findNavController().navigate(R.id.action_carDetailsFragment_to_homeFragment)
             }
-
         }
 
         binding.deleteCar.setOnClickListener {
             val builder = AlertDialog.Builder(requireContext())
                 .setTitle(R.string.deleteDialogTitle)
                 .setPositiveButton("OK") { dialog, which ->
-                    sharedViewModel.deleteCar(currentCar.value!![0])
-                    sharedViewModel.clearCurrentCar()
-                    findNavController().navigate(R.id.action_carDetailsFragment_to_homeFragment)
+                    if (resources.configuration.screenWidthDp > 600) {
+                        if (!currentCar.value.isNullOrEmpty()) {
+                            sharedViewModel.deleteCar(currentCar.value!![0])
+                            sharedViewModel.clearCurrentCar()
+                            sharedViewModel.getCars()
+                        }
+                    } else {
+                        sharedViewModel.deleteCar(currentCar.value!![0])
+                        sharedViewModel.clearCurrentCar()
+                        findNavController().navigate(R.id.action_carDetailsFragment_to_homeFragment)
+                    }
                 }
                 .setNegativeButton("NO") { dialog, which ->
                     dialog.dismiss()
@@ -160,13 +183,14 @@ class CarDetailsFragment : Fragment() {
                 setEditTextVisibility(false, currentCar)
                 setTextViewVisibility(true)
 
+                val k = currentCar.value!![0].km
                 sharedViewModel.clearCurrentCar()
                 sharedViewModel.setCurrentCar(carUpdated)
 
                 lifecycleScope.launch(Dispatchers.IO) {
+                    sharedViewModel.scheduleReminder(requireContext() , carUpdated , k)
                     sharedViewModel.updateCar(carUpdated)
                 }
-
 
             }
         }
@@ -207,7 +231,10 @@ class CarDetailsFragment : Fragment() {
                 element.visibility = VISIBLE
                 when (editText.id) {
                     R.id.car_brand -> editText.setText(currentCar.value?.get(0)?.model ?: "")
-                    R.id.car_cubic_capacity -> editText.setText(currentCar.value?.get(0)?.cubicCapacity ?: "")
+                    R.id.car_cubic_capacity -> editText.setText(
+                        currentCar.value?.get(0)?.cubicCapacity ?: ""
+                    )
+
                     R.id.filled_exposed_dropdown_fuel -> {
                         val dataSet = Dataset()
                         val dropdown = binding.filledExposedDropdownFuel
@@ -217,6 +244,7 @@ class CarDetailsFragment : Fragment() {
                             android.R.layout.simple_spinner_dropdown_item,
                             dataSet.typeFuels
                         )
+
                         dropdown.setAdapter(adapterFuels)
 
                         val fuelIndex = dataSet.typeFuels.indexOf(currentCar.value?.get(0)?.powerSupply ?: "")
@@ -224,7 +252,10 @@ class CarDetailsFragment : Fragment() {
                     }
 
                     R.id.car_km -> editText.setText(currentCar.value?.get(0)?.km ?: "")
-                    R.id.car_description -> editText.setText(currentCar.value?.get(0)?.description ?: "")
+                    R.id.car_description -> editText.setText(
+                        currentCar.value?.get(0)?.description ?: ""
+                    )
+
                     R.id.car_year -> editText.setText(currentCar.value?.get(0)?.year ?: "")
                 }
             } else {

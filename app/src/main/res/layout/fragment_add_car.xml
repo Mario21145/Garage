@@ -80,9 +80,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-
-
-
             <ImageView
                 android:id="@+id/cubicCapacityIcon"
                 android:layout_width="50dp"

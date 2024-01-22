@@ -260,6 +260,7 @@
                     android:layout_marginTop="20dp"
                     android:textSize="25sp"
                     android:textStyle="bold"
+                    android:textAlignment="center"
                     app:layout_constraintEnd_toEndOf="@+id/carKmDetails"
                     app:layout_constraintStart_toStartOf="@+id/carKmDetails"
                     app:layout_constraintTop_toBottomOf="@+id/carKmDetails"
