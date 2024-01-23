@@ -46,7 +46,6 @@ class NotificationAdapter(viewModel: CarViewModel) : RecyclerView.Adapter<Notifi
         val notificationDb = NotificationDb(notification.carName , notification.description)
         holder.deleteButton.setOnClickListener{
             viewModel.deleteNotification(notificationDb)
-            viewModel.getNotifications()
         }
 
     }

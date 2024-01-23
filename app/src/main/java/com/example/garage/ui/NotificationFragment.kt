@@ -1,6 +1,8 @@
 package com.example.garage.ui
 
 import android.app.Application
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -50,15 +52,12 @@ class NotificationFragment : Fragment() {
             lifecycleOwner = this@NotificationFragment
         }
 
-        sharedViewModel.getNotifications()
-
         sharedViewModel.notifications.observe(viewLifecycleOwner){
             val adapter = NotificationAdapter(sharedViewModel)
             binding.notificationRecyclerView.adapter = adapter
             binding.deleteAllNotification.setOnClickListener{
                 if(sharedViewModel.notifications.value!!.isNotEmpty()){
                     sharedViewModel.clearNotifications()
-                    sharedViewModel.getNotifications()
                 }
             }
         }
@@ -67,7 +66,6 @@ class NotificationFragment : Fragment() {
         binding.backArrow.setOnClickListener{
             findNavController().popBackStack()
         }
-
     }
 
 

@@ -19,6 +19,7 @@ import com.example.garage.DbIstance
 import com.example.garage.R
 import com.example.garage.databinding.FragmentAddCarBinding
 import com.example.garage.datasets.Dataset
+import com.example.garage.models.CarDb
 import com.example.garage.viewmodels.CarViewModel
 import com.example.garage.viewmodels.CarViewModelFactory
 import kotlinx.coroutines.Dispatchers
@@ -114,7 +115,8 @@ class AddCarFragment : Fragment() {
         binding.InsertButton.setOnClickListener {
             if(carModel!!.isNotEmpty() && carBrand.isNotEmpty() && carCubicCapacity!!.isNotEmpty() && carFuel.isNotEmpty() && carKm!!.isNotEmpty() && carDescription!!.isNotEmpty() && carYear!!.isNotEmpty()){
                 lifecycleScope.launch(Dispatchers.IO) {
-                    sharedViewModel.insertCar(carModel.toString() , carBrand , carCubicCapacity.toString() , carFuel , carKm.toString() , carDescription.toString() , carYear.toString() , logo)
+                    val car = CarDb(null ,carModel.toString() , carBrand , carCubicCapacity.toString() , carFuel , carKm.toString() , carDescription.toString() , carYear.toString() , logo)
+                    sharedViewModel.insertCar(car)
                 }
                 findNavController().navigate(R.id.action_addCarFragment_to_homeFragment)
             } else {

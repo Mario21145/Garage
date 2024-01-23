@@ -20,7 +20,7 @@
 
                 app:cardElevation="4dp"
                 app:cardCornerRadius="4dp"
-                app:cardBackgroundColor="@color/material_dynamic_primary50"
+                app:cardBackgroundColor="@color/light_blue_900"
                 >
 
                 <androidx.constraintlayout.widget.ConstraintLayout

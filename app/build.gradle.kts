@@ -32,6 +32,10 @@ android {
         dataBinding = true
     }
 
+    testOptions{
+        animationsDisabled = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -51,6 +55,8 @@ dependencies {
 
     implementation ("androidx.room:room-runtime:2.6.1")
     implementation ("androidx.room:room-ktx:2.6.1")
+    implementation("com.google.ar:core:1.41.0")
+    implementation("androidx.test.ext:junit-ktx:1.1.5")
     ksp ("androidx.room:room-compiler:2.6.1")
 
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
@@ -67,8 +73,13 @@ dependencies {
     implementation ("androidx.slidingpanelayout:slidingpanelayout:1.2.0")
 
 
-
     testImplementation("junit:junit:4.13.2")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.6")
+    testImplementation ("androidx.test:rules:1.5.0")
+    debugImplementation("androidx.fragment:fragment-testing:1.6.2")
+    implementation ("org.mockito:mockito-core:3.12.4")
+
 }

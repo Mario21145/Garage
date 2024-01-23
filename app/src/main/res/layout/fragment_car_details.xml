@@ -102,8 +102,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/containerSwitchers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="300dp"
+                android:layout_height="550dp"
                 android:layout_marginBottom="50dp"
                 app:layout_constraintBottom_toTopOf="@id/carSection"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -115,7 +115,7 @@
                     android:id="@+id/carBrandDetails"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="100dp"
                     android:textSize="25sp"
                     android:textStyle="bold"
                     android:visibility="visible"
@@ -130,7 +130,7 @@
                     android:layout_width="170dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="60dp"
                     android:hint="@string/hintCarModel"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"

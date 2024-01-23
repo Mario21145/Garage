@@ -50,9 +50,9 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/car_brand_label"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="600dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginHorizontal="10dp"
                     android:layout_marginTop="40dp"
                     android:hint="@string/hintCarModel"
                     android:visibility="gone"
@@ -89,7 +89,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/car_cubic_capacity_label"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="600dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:hint="@string/hintCubicCapacity"
@@ -130,7 +130,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/car_fuel_label"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="600dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:hint="@string/hintFuel"
@@ -167,7 +167,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/car_km_label"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="600dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:hint="@string/hintKm"
@@ -206,7 +206,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/car_description_label"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="600dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:hint="@string/hintDescription"
@@ -245,15 +245,16 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/car_year_label"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="570dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:hint="@string/hintYear"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="@+id/car_description_label"
+                    app:layout_constraintEnd_toEndOf="@id/car_description_label"
+
                     app:layout_constraintStart_toStartOf="@+id/car_description_label"
-                    app:layout_constraintTop_toBottomOf="@+id/car_description_label">
+                    app:layout_constraintTop_toBottomOf="@+id/car_description_label"
+                    tools:visibility="visible">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/car_year"
@@ -261,45 +262,40 @@
                         android:layout_height="match_parent"
                         android:inputType="textAutoComplete|textCapWords"
                         android:singleLine="true"
-                        android:textStyle="bold"
                         android:textSize="25sp"
-                        />
+                        android:textStyle="bold" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <RelativeLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/relativeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingVertical="8dp"
                 android:background="@drawable/custom_shape_car_details_top"
                 android:backgroundTint="@color/light_blue_900"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/containerSwitchers"
                 >
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/introductionTest"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginTop="40dp"
-                        android:textColor="@color/white"
                         android:text="@string/yourDetails"
+                        android:textColor="@color/white"
                         android:textSize="40sp"
                         android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </RelativeLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/deleteCar"

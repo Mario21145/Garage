@@ -1,16 +1,14 @@
 package com.example.garage.database
 
-import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Update
 import com.example.garage.models.CarDb
 import com.example.garage.models.NotificationDb
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CarDao {
@@ -36,7 +34,7 @@ interface CarDao {
 
     //Notifications
     @Query("SELECT * FROM notifications")
-    fun getNotifications() : List<NotificationDb>
+    fun getNotifications() : Flow<List<NotificationDb>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertNotification(notification: NotificationDb)

@@ -2,6 +2,7 @@ package com.example.garage.ui
 
 import android.app.Application
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -39,7 +40,7 @@ class HomeFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         setHasOptionsMenu(true)
         (activity as AppCompatActivity?)?.supportActionBar?.hide()
@@ -55,7 +56,6 @@ class HomeFragment : Fragment() {
             lifecycleOwner = this@HomeFragment
         }
 
-
         //CarDetails sliding pane layout only for large display
         val slidingPaneLayoutCar = binding.slidingPaneLayoutCarDetails
         slidingPaneLayoutCar?.lockMode = SlidingPaneLayout.LOCK_MODE_LOCKED
@@ -67,13 +67,9 @@ class HomeFragment : Fragment() {
         }
 
         val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-
-            }
+            override fun handleOnBackPressed() {}
         }
         requireActivity().onBackPressedDispatcher.addCallback(callback)
-
-
 
         sharedViewModel.getCars()
         sharedViewModel.carList.observe(viewLifecycleOwner) { cars ->
@@ -101,15 +97,14 @@ class HomeFragment : Fragment() {
             binding.HomeRecyclerView.adapter = adapter
         }
 
-        sharedViewModel.getNotifications()
-        sharedViewModel.notifications.observe(viewLifecycleOwner){
 
+        sharedViewModel.notifications.observe(viewLifecycleOwner) {
             val size = it.size
-            if(size == 0){
-                binding.notificationCounter?.visibility  = View.GONE
+            if (size == 0) {
+                binding.notificationCounter.visibility = View.GONE
             } else {
-                binding.notificationCounter?.visibility  = View.VISIBLE
-                binding.notificationCounter?.text = size.toString()
+                binding.notificationCounter.visibility = View.VISIBLE
+                binding.notificationCounter.text = size.toString()
             }
         }
 
@@ -144,7 +139,8 @@ class HomeFragment : Fragment() {
         })
 
         binding.SearchCar.setOnCloseListener {
-            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm =
+                view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
             sharedViewModel.getCars()
             true
@@ -157,10 +153,8 @@ class HomeFragment : Fragment() {
 }
 
 class CarsListOnBackPressedCallback(
-    private val slidingPaneLayout: SlidingPaneLayout
+    private val slidingPaneLayout: SlidingPaneLayout,
 ) : OnBackPressedCallback(
-    // Set the default 'enabled' state to true only if it is slidable (i.e., the panes
-    // are overlapping) and open (i.e., the detail pane is visible).
     slidingPaneLayout.isSlideable && slidingPaneLayout.isOpen
 ), SlidingPaneLayout.PanelSlideListener {
 
@@ -169,21 +163,16 @@ class CarsListOnBackPressedCallback(
     }
 
     override fun handleOnBackPressed() {
-        // Return to the list pane when the system back button is pressed.
         slidingPaneLayout.closePane()
     }
 
     override fun onPanelSlide(panel: View, slideOffset: Float) {}
 
     override fun onPanelOpened(panel: View) {
-        // Intercept the system back button when the detail pane becomes visible.
         isEnabled = true
     }
 
     override fun onPanelClosed(panel: View) {
-        // Disable intercepting the system back button when the user returns to the
-        // list pane.
         isEnabled = false
     }
 }
-

@@ -2,14 +2,15 @@ package com.example.garage.viewmodels
 
 import android.app.Application
 import android.content.Context
-import android.provider.Settings.System.getString
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.slidingpanelayout.widget.SlidingPaneLayout
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
@@ -23,15 +24,12 @@ import com.example.garage.network.CarsApi
 import com.example.garage.workers.CarServiceRememberWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
-class CarViewModel(private val carDao: CarDao, application: Application) : ViewModel() {
+class CarViewModel(private val carDao: CarDao) : ViewModel() {
 
     enum class CarsApiStatus { DONE, ERROR, DEFAULT }
 
-    private var _statusRequest = MutableLiveData<CarsApiStatus>().apply {
-        value = CarsApiStatus.DEFAULT
-    }
+    private var _statusRequest = MutableLiveData<CarsApiStatus>()
     val statusRequest: LiveData<CarsApiStatus> = _statusRequest
 
     private val _carLogos = MutableLiveData<List<RemoteCarData>>()
@@ -43,9 +41,7 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
     private val _uptadedcar = MutableLiveData<List<CarDb>>()
     val updatedCar: MutableLiveData<List<CarDb>> = _uptadedcar
 
-    private val _notifications = MutableLiveData<List<NotificationDb>>()
-    val notifications: MutableLiveData<List<NotificationDb>> = _notifications
-
+    val notifications: LiveData<List<NotificationDb>> = carDao.getNotifications().asLiveData()
 
     init {
         fetchCarData()
@@ -71,18 +67,8 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
     }
 
     //CRUD OPERATIONS CARS
-    fun insertCar(
-        model: String,
-        brand: String,
-        cubicCapacity: String,
-        powerSupply: String,
-        km: String,
-        description: String,
-        year : String,
-        logo: String,
-    ) {
-        val carDb = CarDb(null ,model, brand, cubicCapacity, powerSupply, km, description , year , logo)
-        carDao.insertCar(carDb)
+    fun insertCar(car : CarDb) {
+        carDao.insertCar(car)
     }
 
     fun getCars() {
@@ -127,16 +113,6 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
 
 
     // CRUD OPERATIONS NOTIFICATIONS
-    fun getNotifications() {
-        viewModelScope.launch(Dispatchers.Main) {
-            viewModelScope.launch(Dispatchers.IO) {
-                val notifications = carDao.getNotifications()
-                viewModelScope.launch(Dispatchers.Main) {
-                    _notifications.value = notifications
-                }
-            }
-        }
-    }
 
     fun clearNotifications(){
         viewModelScope.launch(Dispatchers.IO) {
@@ -181,19 +157,6 @@ class CarViewModel(private val carDao: CarDao, application: Application) : ViewM
             }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     fun makeToast(context: Context, msg: String, duration: Int) {
         Toast.makeText(context, msg, duration).show()
     }
@@ -204,7 +167,7 @@ class CarViewModelFactory(private val carDao: CarDao, val application: Applicati
     ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(CarViewModel::class.java)) {
-            CarViewModel(carDao, application) as T
+            CarViewModel(carDao) as T
         } else {
             throw IllegalArgumentException("Unknown ViewModel class")
         }
