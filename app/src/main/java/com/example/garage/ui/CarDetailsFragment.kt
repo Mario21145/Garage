@@ -64,7 +64,6 @@ class CarDetailsFragment : Fragment() {
 
         sharedViewModel.carList.observe(viewLifecycleOwner) {
             if (resources.configuration.screenWidthDp > 600) {
-
                 if(sharedViewModel.carList.value.isNullOrEmpty()){
                     binding.root.visibility = GONE
                 } else {
@@ -216,14 +215,6 @@ class CarDetailsFragment : Fragment() {
             binding.carDescription,
             binding.carYear,
         )
-
-        for (editText in editTextLayouts) {
-            if (isVisible) {
-                editText.visibility = VISIBLE
-            } else {
-                editText.visibility = INVISIBLE
-            }
-        }
 
         for ((index, element) in editTextLayouts.withIndex()) {
             val editText = editTexts[index]

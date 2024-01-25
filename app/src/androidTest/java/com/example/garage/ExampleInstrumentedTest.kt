@@ -32,13 +32,9 @@ class ExampleInstrumentedTest {
         application = ApplicationProvider.getApplicationContext()
         carDatabase = Room.inMemoryDatabaseBuilder(application, CarDatabase::class.java).build()
         carDao = carDatabase.CarDao()
-
-
-
         val factory = CarViewModelFactory(carDao, application)
         viewModel = ViewModelProvider(ViewModelStore(), factory)[CarViewModel::class.java]
     }
-
 
     //Cars CRUD tests
     @Test

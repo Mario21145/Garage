@@ -71,6 +71,7 @@ class HomeFragment : Fragment() {
         }
         requireActivity().onBackPressedDispatcher.addCallback(callback)
 
+
         sharedViewModel.getCars()
         sharedViewModel.carList.observe(viewLifecycleOwner) { cars ->
 
@@ -98,6 +99,8 @@ class HomeFragment : Fragment() {
         }
 
 
+
+
         sharedViewModel.notifications.observe(viewLifecycleOwner) {
             val size = it.size
             if (size == 0) {
@@ -110,13 +113,9 @@ class HomeFragment : Fragment() {
 
 
 
-
-
-
         binding.AddCar.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_addCarFragment)
         }
-
 
         binding.SearchCar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -146,7 +145,7 @@ class HomeFragment : Fragment() {
             true
         }
 
-        binding.notificationIcon?.setOnClickListener {
+        binding.notificationIcon.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_notificationFragment)
         }
     }

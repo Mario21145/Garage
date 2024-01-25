@@ -58,6 +58,7 @@
                     android:cropToPadding="true"
                     android:src="@drawable/delete"
                     android:background="@android:color/transparent"
+                    android:backgroundTint="@color/white"
                     android:layout_margin="10dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/carNameNotification"
