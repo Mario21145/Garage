@@ -63,7 +63,6 @@ class CarDetailsFragment : Fragment() {
         val currentCar = sharedViewModel.updatedCar
 
         sharedViewModel.carList.observe(viewLifecycleOwner) {
-            if (resources.configuration.screenWidthDp > 600) {
                 if(sharedViewModel.carList.value.isNullOrEmpty()){
                     binding.root.visibility = GONE
                 } else {
@@ -83,7 +82,6 @@ class CarDetailsFragment : Fragment() {
                         }
                     }
                 }
-            }
         }
 
 
