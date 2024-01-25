@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".ui.CarFragment">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/Car"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+
+                app:cardElevation="4dp"
+                app:cardCornerRadius="4dp"
+                app:cardBackgroundColor="@color/light_blue_900"
+                >
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    >
+
+                    <ImageView
+                        android:id="@+id/CarLogo"
+                        android:layout_width="150dp"
+                        android:layout_height="100dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@drawable/placeholder_car_image"
+                        />
+
+                    <TextView
+                        android:id="@+id/CarModel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:textSize="25sp"
+                        app:layout_constraintTop_toBottomOf="@id/CarLogo"
+                        app:layout_constraintStart_toStartOf="@id/CarLogo"
+                        app:layout_constraintEnd_toEndOf="@id/CarLogo"
+                        tools:text="Ferrari purosangue"
+                        />
+
+                    <TextView
+                        android:id="@+id/CarYear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintTop_toBottomOf="@id/CarModel"
+                        app:layout_constraintStart_toStartOf="@id/CarLogo"
+                        app:layout_constraintEnd_toEndOf="@id/CarLogo"
+                        tools:text="2023"
+                        />
+
+                    <TextView
+                        android:id="@+id/CarDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:textSize="25sp"
+                        android:layout_marginTop="20sp"
+                        android:textAlignment="center"
+                        app:layout_constraintTop_toBottomOf="@id/CarYear"
+                        app:layout_constraintStart_toStartOf="@id/CarLogo"
+                        app:layout_constraintEnd_toEndOf="@id/CarLogo"
+                        tools:text="This is the ferrari purosangue the best of the italian cars"
+                        />
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/infoCar"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        app:fabCustomSize="50dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:src="@drawable/information"
+                        app:tint="@color/white"
+                        />
+
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+    </FrameLayout>
+</layout>

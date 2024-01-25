@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Garage</string>
+
+    <string name="hintCarModel">Modello</string>
+    <string name="hintCubicCapacity">Cilindrata</string>
+    <string name="hintFuel">Carburante</string>
+    <string name="hintKm">Km</string>
+    <string name="hintDescription">Descrizione</string>
+    <string name="hintYear">Anno</string>
+    <string name="hintBrand">Marca</string>
+
+    <string name="deleteDialogTitle">Vuoi rimuovere la tua macchina?</string>
+    <string name="model">Modello: %s</string>
+    <string name="cubicCapacity">Cilindrata : %s</string>
+    <string name="fuel">Carburante: %s</string>
+    <string name="km">Km: %s</string>
+    <string name="description">Descrizione : %s</string>
+    <string name="year">Anno: %s</string>
+
+    <string name="toastErrorFieldEmpty">Riempi tutti i campi!</string>
+    <string name="yourDetails">I tuoi dettagli</string>
+
+    <string name="yourNotification">Le tue notifiche</string>
+
+    <string name="notificationTextTitle">Guardami!</string>
+    <string name="notificationTextDescription">Alcune azioni da fare su: %1$s %2$s</string>
+
+    <string name="notificationDbTextDescription">Da fare il tagliando</string>
+
+</resources>
