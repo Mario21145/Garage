@@ -1,6 +1,7 @@
 package com.example.garage.ui
 
 import android.app.Application
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.TextView
@@ -93,7 +95,8 @@ class CarDetailsFragment : Fragment() {
                 binding.carKmDetails.text = getString(R.string.km, it[0].km)
                 binding.carDescriptionDetails.text = getString(R.string.description, it[0].description)
                 binding.carYearDetails.text = getString(R.string.year, it[0].year)
-                binding.carModelDetails?.text = it[0].model
+
+                binding.carModelDetails?.text = it[0].Brand
 
                 binding.carLogoDetails?.load(it[0].logo) {
                     crossfade(true)
@@ -187,10 +190,16 @@ class CarDetailsFragment : Fragment() {
                 lifecycleScope.launch(Dispatchers.IO) {
                     sharedViewModel.scheduleReminder(requireContext() , carUpdated , k)
                     sharedViewModel.updateCar(carUpdated)
+                    val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                    sharedViewModel.getCars()
                 }
 
             }
         }
+
+
+
 
     }
 
