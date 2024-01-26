@@ -93,7 +93,8 @@ class CarDetailsFragment : Fragment() {
                 binding.carKmDetails.text = getString(R.string.km, it[0].km)
                 binding.carDescriptionDetails.text = getString(R.string.description, it[0].description)
                 binding.carYearDetails.text = getString(R.string.year, it[0].year)
-                binding.carModelDetails?.text = it[0].model
+
+                binding.carModelDetails?.text = it[0].Brand
 
                 binding.carLogoDetails?.load(it[0].logo) {
                     crossfade(true)
