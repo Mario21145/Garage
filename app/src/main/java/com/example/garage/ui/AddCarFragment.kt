@@ -1,6 +1,7 @@
 package com.example.garage.ui
 
 import android.app.Application
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
@@ -30,7 +31,7 @@ import java.util.Calendar
 
 class AddCarFragment : Fragment() {
 
-    val sharedViewModel: CarViewModel by activityViewModels {
+    private val sharedViewModel: CarViewModel by activityViewModels {
         CarViewModelFactory(
             (activity?.application as DbIstance).database.CarDao(), Application()
         )
@@ -43,12 +44,15 @@ class AddCarFragment : Fragment() {
     ): View {
         setHasOptionsMenu(false)
         (activity as AppCompatActivity?)?.supportActionBar?.hide()
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_car, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        Log.d("State" , "OnViewCreated")
 
         binding.apply {
             viewModel = sharedViewModel
@@ -82,7 +86,7 @@ class AddCarFragment : Fragment() {
 
 
         val carModelLabel = binding.carNameLabel
-        val carModel = carModelLabel.editText?.text
+        var carName = carModelLabel.editText?.text
 
         val dropdownBrand = binding.filledExposedDropdownBrand
         sharedViewModel.carLogos.observe(viewLifecycleOwner) { carList ->
@@ -120,9 +124,10 @@ class AddCarFragment : Fragment() {
         }
 
         binding.InsertButton.setOnClickListener {
-            if(carModel!!.isNotEmpty() && carBrand.isNotEmpty() && carCubicCapacity!!.isNotEmpty() && carFuel.isNotEmpty() && carKm!!.isNotEmpty() && carDescription!!.isNotEmpty() ){
+
+            if(carName!!.isNotEmpty() && carBrand.isNotEmpty() && carCubicCapacity!!.isNotEmpty() && carFuel.isNotEmpty() && carKm!!.isNotEmpty() && carDescription!!.isNotEmpty() ){
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val car = CarDb(null ,carModel.toString() , carBrand , carCubicCapacity.toString() , carFuel , carKm.toString() , carDescription.toString() , currentYear.toString() , logo)
+                    val car = CarDb(null ,carName.toString() , carBrand , carCubicCapacity.toString() , carFuel , carKm.toString() , carDescription.toString() , currentYear.toString() , logo)
                     sharedViewModel.insertCar(car)
                 }
                 findNavController().navigate(R.id.action_addCarFragment_to_homeFragment)
@@ -133,7 +138,6 @@ class AddCarFragment : Fragment() {
 
         //Icons dark Mode
         val isDarkTheme = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-
         if(isDarkTheme){
             binding.carModelIcon.setColorFilter(Color.argb(255, 255, 255, 255))
             binding.cubicCapacityIcon.setColorFilter(Color.argb(255, 255, 255, 255))
@@ -143,6 +147,13 @@ class AddCarFragment : Fragment() {
             binding.CarYearIcon.setColorFilter(Color.argb(255, 255, 255, 255))
         }
 
+    }
+
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
     }
 
 }
