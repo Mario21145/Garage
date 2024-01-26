@@ -114,7 +114,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:background="@drawable/shape_search_car"
-                android:backgroundTint="@color/material_dynamic_primary80"
+                android:backgroundTint="@color/light_blue_500"
                 android:inputType="text"
                 app:layout_constraintTop_toTopOf="@+id/AddCar"
                 app:layout_constraintBottom_toBottomOf="@+id/AddCar"

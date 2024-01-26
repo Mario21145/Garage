@@ -10,7 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.NumberPicker
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isNotEmpty
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +26,7 @@ import com.example.garage.viewmodels.CarViewModel
 import com.example.garage.viewmodels.CarViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class AddCarFragment : Fragment() {
 
@@ -61,9 +64,13 @@ class AddCarFragment : Fragment() {
         )
         binding.filledExposedDropdownFuel.setAdapter(adapterFuels)
 
-        val carYearLabel = binding.carYearLabel
-        val carYear = carYearLabel.editText?.text
-
+        val carYear: NumberPicker = binding.carYear
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        carYear.minValue = currentYear - 50
+        carYear.maxValue = currentYear
+        val displayValues = Array(51) { (currentYear - 50 + it).toString() }
+        carYear.displayedValues = displayValues
+        carYear.value = currentYear
 
         //Text inputs
         lateinit var carBrand : String
@@ -113,9 +120,9 @@ class AddCarFragment : Fragment() {
         }
 
         binding.InsertButton.setOnClickListener {
-            if(carModel!!.isNotEmpty() && carBrand.isNotEmpty() && carCubicCapacity!!.isNotEmpty() && carFuel.isNotEmpty() && carKm!!.isNotEmpty() && carDescription!!.isNotEmpty() && carYear!!.isNotEmpty()){
+            if(carModel!!.isNotEmpty() && carBrand.isNotEmpty() && carCubicCapacity!!.isNotEmpty() && carFuel.isNotEmpty() && carKm!!.isNotEmpty() && carDescription!!.isNotEmpty() ){
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val car = CarDb(null ,carModel.toString() , carBrand , carCubicCapacity.toString() , carFuel , carKm.toString() , carDescription.toString() , carYear.toString() , logo)
+                    val car = CarDb(null ,carModel.toString() , carBrand , carCubicCapacity.toString() , carFuel , carKm.toString() , carDescription.toString() , currentYear.toString() , logo)
                     sharedViewModel.insertCar(car)
                 }
                 findNavController().navigate(R.id.action_addCarFragment_to_homeFragment)

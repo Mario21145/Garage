@@ -11,7 +11,7 @@
 
     </data>
 
-    <FrameLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.AddCarFragment">
@@ -19,7 +19,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="10dp"
             >
 
@@ -211,8 +211,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-
-                android:hint="@string/hintKm"
+                android:hint="@string/hintDescription"
                 app:layout_constraintStart_toEndOf="@+id/CarDescriptionIcon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/car_km_label"
@@ -240,59 +239,44 @@
                 android:layout_height="50dp"
                 app:srcCompat = "@drawable/calendar"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/car_year_label"
-                app:layout_constraintBottom_toBottomOf="@id/car_year_label"
+                app:layout_constraintTop_toTopOf="@id/car_year"
+                app:layout_constraintBottom_toBottomOf="@id/car_year"
                 />
 
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/car_year_label"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="10dp"
-                android:hint="@string/hintYear"
-                app:layout_constraintStart_toEndOf="@+id/CarYearIcon"
-                app:layout_constraintTop_toBottomOf="@id/car_description_label"
-                >
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/car_year"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="numberDecimal"
-                    android:maxLength="4"
-                    android:singleLine="true"
-                    android:textStyle="bold"
-                    />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/InsertButton"
-                android:layout_width="150dp"
-                android:layout_height="60dp"
-                android:layout_marginStart="10dp"
-                android:text="Add"
-                app:layout_constraintBottom_toBottomOf="@id/backButton"
+            <NumberPicker
+                android:id="@+id/car_year"
+                android:layout_width="600dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/backButton"
-                app:layout_constraintTop_toTopOf="@id/backButton" />
+                android:descendantFocusability="blocksDescendants"
+                app:layout_constraintTop_toBottomOf="@id/car_description_label"
+                />
+
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/backButton"
                 android:layout_width="150dp"
                 android:layout_height="60dp"
                 android:text="back"
-                app:layout_constraintBottom_toBottomOf="@id/car_year_label"
-                app:layout_constraintStart_toEndOf="@id/car_year_label"
-                android:layout_marginStart="30dp"
-                />
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/car_year" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/InsertButton"
+                android:layout_width="150dp"
+                android:layout_height="60dp"
+                android:text="Add"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/backButton" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </FrameLayout>
+    </ScrollView>
 </layout>
