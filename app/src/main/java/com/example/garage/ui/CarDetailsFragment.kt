@@ -236,17 +236,18 @@ class CarDetailsFragment : Fragment() {
                     R.id.filled_exposed_dropdown_fuel -> {
                         val dataSet = Dataset()
                         val dropdown = binding.filledExposedDropdownFuel
-
                         val adapterFuels = ArrayAdapter(
                             requireContext(),
                             android.R.layout.simple_spinner_dropdown_item,
                             dataSet.typeFuels
                         )
-
                         dropdown.setAdapter(adapterFuels)
-
                         val fuelIndex = dataSet.typeFuels.indexOf(currentCar.value?.get(0)?.powerSupply ?: "")
-                        dropdown.setText(adapterFuels.getItem(fuelIndex), false)
+                        if (fuelIndex != -1) {
+                            dropdown.setText(adapterFuels.getItem(fuelIndex), false)
+                        } else {
+                            dropdown.setText(adapterFuels.getItem(0), false)
+                        }
                     }
 
                     R.id.car_km -> editText.setText(currentCar.value?.get(0)?.km ?: "")
