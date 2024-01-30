@@ -26,6 +26,9 @@ import com.example.garage.network.CarsApi
 import com.example.garage.workers.CarServiceRememberWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.net.URL
 
 class CarViewModel(private val carDao: CarDao) : ViewModel() {
 
@@ -37,8 +40,7 @@ class CarViewModel(private val carDao: CarDao) : ViewModel() {
     private val _carLogos = MutableLiveData<List<RemoteCarData>>()
     val carLogos: MutableLiveData<List<RemoteCarData>> = _carLogos
 
-    private val _carList = MutableLiveData<List<CarDb>>()
-    val carList: MutableLiveData<List<CarDb>> = _carList
+    val carList: LiveData<List<CarDb>> = carDao.getCars().asLiveData()
 
     private val _uptadedcar = MutableLiveData<List<CarDb>>()
     val updatedCar: MutableLiveData<List<CarDb>> = _uptadedcar
@@ -76,17 +78,6 @@ class CarViewModel(private val carDao: CarDao) : ViewModel() {
         carDao.insertCar(car)
     }
 
-    fun getCars() {
-        viewModelScope.launch(Dispatchers.Main) {
-            viewModelScope.launch(Dispatchers.IO) {
-                val cars = carDao.getCars()
-                viewModelScope.launch(Dispatchers.Main) {
-                    _carList.value = cars
-                }
-            }
-        }
-    }
-
     fun deleteCar(car : CarDb){
         viewModelScope.launch(Dispatchers.IO) {
             carDao.deleteCar(car)
@@ -114,6 +105,8 @@ class CarViewModel(private val carDao: CarDao) : ViewModel() {
             updatedCar.value = listOf()
         }
     }
+
+
 
 
 
@@ -178,6 +171,29 @@ class CarViewModel(private val carDao: CarDao) : ViewModel() {
             _isInternetAvailable.postValue(false)
         }
     }
+
+    fun downloadImage(imageUrl: String): ByteArray {
+        val url = URL(imageUrl)
+        val connection = url.openConnection()
+        connection.connect()
+
+        val input: InputStream = connection.getInputStream()
+        val output = ByteArrayOutputStream()
+
+        val buffer = ByteArray(4096)
+        var bytesRead: Int
+
+        try {
+            while (input.read(buffer).also { bytesRead = it } != -1) {
+                output.write(buffer, 0, bytesRead)
+            }
+        } finally {
+            input.close()
+        }
+
+        return output.toByteArray()
+    }
+
 
 
     fun makeToast(context: Context, msg: String, duration: Int) {

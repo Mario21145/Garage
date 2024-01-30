@@ -27,8 +27,12 @@ import com.example.garage.viewmodels.CarViewModel
 import com.example.garage.viewmodels.CarViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.net.URL
 import java.util.Calendar
 import kotlin.properties.Delegates
+import kotlin.io.readBytes
 
 class AddCarFragment : Fragment() {
 
@@ -198,7 +202,8 @@ class AddCarFragment : Fragment() {
                         carKm,
                         carDescription,
                         carYear.value.toString(),
-                        logo
+                        logo,
+                        sharedViewModel.downloadImage(logo)
                     )
                     sharedViewModel.insertCar(car)
                 }
@@ -228,7 +233,6 @@ class AddCarFragment : Fragment() {
         }
     }
 
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         Log.d("State", "Stato e: $outState")
@@ -244,4 +248,8 @@ class AddCarFragment : Fragment() {
             outState.putInt("selectedYear", carYearSaved.value)
         }
     }
+
+
+
+
 }

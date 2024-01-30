@@ -1,5 +1,6 @@
 package com.example.garage.adapter
 
+import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
@@ -8,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Switch
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.garage.R
@@ -20,16 +23,19 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.w3c.dom.Text
 
-class CarAdapter(viewModel: CarViewModel ,  private val clickListener: (CarDb) -> Unit) : RecyclerView.Adapter<CarAdapter.CarViewHolder>() {
+class CarAdapter(viewModel: CarViewModel, private val clickListener: (CarDb) -> Unit) :
+    ListAdapter<CarDb, CarAdapter.CarViewHolder>(CarDiffCallback()) {
 
-    var cars : List<CarDb> = viewModel.carList.value ?: emptyList()
+    init {
+        submitList(viewModel.carList.value)
+    }
 
     class CarViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val carLogo : ImageView = itemView.findViewById(R.id.CarLogo)
-        val carModel : TextView = itemView.findViewById(R.id.CarModel)
-        val carYear : TextView = itemView.findViewById(R.id.CarYear)
-        val carDescription : TextView = itemView.findViewById(R.id.CarDescription)
-        val infoButton : FloatingActionButton = itemView.findViewById(R.id.infoCar)
+        val carLogo: ImageView = itemView.findViewById(R.id.CarLogo)
+        val carModel: TextView = itemView.findViewById(R.id.CarModel)
+        val carYear: TextView = itemView.findViewById(R.id.CarYear)
+        val carDescription: TextView = itemView.findViewById(R.id.CarDescription)
+        val infoButton: FloatingActionButton = itemView.findViewById(R.id.infoCar)
     }
 
     override fun onCreateViewHolder(
@@ -37,34 +43,38 @@ class CarAdapter(viewModel: CarViewModel ,  private val clickListener: (CarDb) -
         viewType: Int
     ): CarViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val itemView = layoutInflater.inflate(R.layout.fragment_car , parent, false)
+        val itemView = layoutInflater.inflate(R.layout.fragment_car, parent, false)
         return CarViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: CarViewHolder, position: Int) {
-        val car = cars[position]
+        val car = getItem(position)
         holder.carLogo.setImageResource(R.drawable.placeholder_car_image)
 
         holder.carModel.text = car.model
         holder.carYear.text = car.year
         holder.carDescription.text = car.description
 
-        holder.carLogo.load(car.logo) {
-            crossfade(true)
-            placeholder(R.drawable.loading)
-            error(R.drawable.pictures)
-        }
+        val bmp = car.imageLogo?.let { BitmapFactory.decodeByteArray(car.imageLogo, 0, it.size) }
+        holder.carLogo.setImageBitmap(bmp)
 
-        holder.infoButton.setOnClickListener{
+        holder.infoButton.setOnClickListener {
             clickListener(car)
         }
-
     }
 
-    override fun getItemCount(): Int {
-        return cars.size
+    private class CarDiffCallback : DiffUtil.ItemCallback<CarDb>() {
+        override fun areItemsTheSame(oldItem: CarDb, newItem: CarDb): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: CarDb, newItem: CarDb): Boolean {
+            // Adjust this based on your equality criteria
+            return oldItem == newItem
+        }
     }
 }
+
 
 
 

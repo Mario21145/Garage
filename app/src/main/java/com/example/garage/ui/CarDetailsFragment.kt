@@ -2,6 +2,7 @@ package com.example.garage.ui
 
 import android.app.Application
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -33,11 +34,12 @@ import com.example.garage.viewmodels.CarViewModelFactory
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class CarDetailsFragment : Fragment() {
 
-    val sharedViewModel: CarViewModel by activityViewModels {
+    private val sharedViewModel: CarViewModel by activityViewModels {
         CarViewModelFactory(
             (activity?.application as DbIstance).database.CarDao(), Application()
         )
@@ -64,8 +66,8 @@ class CarDetailsFragment : Fragment() {
 
         val currentCar = sharedViewModel.updatedCar
 
-        sharedViewModel.carList.observe(viewLifecycleOwner) {
-                if(sharedViewModel.carList.value.isNullOrEmpty()){
+        sharedViewModel.carList.observe(viewLifecycleOwner) { it ->
+            if(sharedViewModel.carList.value.isNullOrEmpty()){
                     binding.root.visibility = GONE
                 } else {
                     binding.root.visibility = VISIBLE
@@ -77,11 +79,16 @@ class CarDetailsFragment : Fragment() {
                         binding.carDescriptionDetails.text = getString(R.string.description, it[0].description)
                         binding.carYearDetails.text = getString(R.string.year, it[0].year)
                         binding.carModelDetails?.text = it[0].model
-                        binding.carLogoDetails?.load(it[0].logo) {
-                            crossfade(true)
-                            placeholder(R.drawable.loading)
-                            error(R.drawable.pictures)
+
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            val logoUrl = sharedViewModel.downloadImage(it[0].logo)
+                            val bmp = it[0].let { BitmapFactory.decodeByteArray(logoUrl, 0, logoUrl.size) }
+
+                            withContext(Dispatchers.Main) {
+                                binding.carLogoDetails?.setImageBitmap(bmp)
+                            }
                         }
+
                     }
                 }
         }
@@ -95,13 +102,13 @@ class CarDetailsFragment : Fragment() {
                 binding.carKmDetails.text = getString(R.string.km, it[0].km)
                 binding.carDescriptionDetails.text = getString(R.string.description, it[0].description)
                 binding.carYearDetails.text = getString(R.string.year, it[0].year)
-
                 binding.carModelDetails?.text = it[0].Brand
-
-                binding.carLogoDetails?.load(it[0].logo) {
-                    crossfade(true)
-                    placeholder(R.drawable.loading)
-                    error(R.drawable.pictures)
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val logoUrl = sharedViewModel.downloadImage(it[0].logo)
+                    val bmp = it[0].let { BitmapFactory.decodeByteArray(logoUrl, 0, logoUrl.size) }
+                    withContext(Dispatchers.Main) {
+                        binding.carLogoDetails?.setImageBitmap(bmp)
+                    }
                 }
             }
         }
@@ -128,7 +135,6 @@ class CarDetailsFragment : Fragment() {
                         if (!currentCar.value.isNullOrEmpty()) {
                             sharedViewModel.deleteCar(currentCar.value!![0])
                             sharedViewModel.clearCurrentCar()
-                            sharedViewModel.getCars()
                         }
                     } else {
                         sharedViewModel.deleteCar(currentCar.value!![0])
@@ -173,7 +179,8 @@ class CarDetailsFragment : Fragment() {
                     km,
                     description,
                     year,
-                    currentCar.value?.get(0)?.logo ?: ""
+                    currentCar.value?.get(0)?.logo ?: "",
+                    currentCar.value?.get(0)?.logo?.let { it1 -> sharedViewModel.downloadImage(it1) }
                 )
 
                 binding.confirmCar.visibility = INVISIBLE
@@ -192,7 +199,6 @@ class CarDetailsFragment : Fragment() {
                     sharedViewModel.updateCar(carUpdated)
                     val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(view.windowToken, 0)
-                    sharedViewModel.getCars()
                 }
 
             }

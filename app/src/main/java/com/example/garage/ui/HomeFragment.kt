@@ -37,6 +37,7 @@ class HomeFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentHomeBinding
+    private lateinit var adapter: CarAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,8 +72,6 @@ class HomeFragment : Fragment() {
         }
         requireActivity().onBackPressedDispatcher.addCallback(callback)
 
-
-        sharedViewModel.getCars()
         sharedViewModel.carList.observe(viewLifecycleOwner) { cars ->
 
             if (resources.configuration.screenWidthDp > 600) {
@@ -81,7 +80,7 @@ class HomeFragment : Fragment() {
                 }
             }
 
-            val adapter = CarAdapter(sharedViewModel) { car ->
+             adapter = CarAdapter(sharedViewModel) { car ->
                 val slidingPanelayoutCar = binding.slidingPaneLayoutCarDetails
                 val slidingPanel = binding.HomeRecyclerView
                 if (resources.configuration.screenWidthDp > 600) {
@@ -98,9 +97,6 @@ class HomeFragment : Fragment() {
             binding.HomeRecyclerView.adapter = adapter
         }
 
-
-
-
         sharedViewModel.notifications.observe(viewLifecycleOwner) {
             val size = it.size
             if (size == 0) {
@@ -112,43 +108,39 @@ class HomeFragment : Fragment() {
         }
 
         sharedViewModel.isInternetAvailable(requireContext())
-        sharedViewModel.isInternetAvailable.observe(viewLifecycleOwner){
-            binding.AddCar.isEnabled = it
+        sharedViewModel.isInternetAvailable.observe(viewLifecycleOwner) {
+            binding.AddCar.isEnabled = !it
         }
 
         binding.AddCar.setOnClickListener {
-            if(binding.AddCar.isEnabled){
+            if (binding.AddCar.isEnabled) {
                 findNavController().navigate(R.id.action_homeFragment_to_addCarFragment)
             } else {
-                Log.d("State" , "No connection")
+                Log.d("State", "No connection")
             }
         }
 
         binding.SearchCar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                val list = mutableListOf<CarDb>()
-                if (query != null) {
-                    for (i in sharedViewModel.carList.value!!) {
-                        if (i.model.contains(query, true)) {
-                            list.add(i)
-                        }
-                    }
-                    sharedViewModel.carList.value = list
-                }
-                return true
+                return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                return false
+                adapter.submitList(
+                    sharedViewModel.carList.value?.filter { car ->
+                        car.Brand.startsWith(newText.toString(), true) ||
+                                car.model.startsWith(newText.toString(), true)
+                    }
+                )
+
+                return true
             }
 
         })
 
         binding.SearchCar.setOnCloseListener {
-            val imm =
-                view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
-            sharedViewModel.getCars()
             true
         }
 
