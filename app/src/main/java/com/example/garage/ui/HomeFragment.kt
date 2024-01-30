@@ -109,7 +109,7 @@ class HomeFragment : Fragment() {
 
         sharedViewModel.isInternetAvailable(requireContext())
         sharedViewModel.isInternetAvailable.observe(viewLifecycleOwner) {
-            binding.AddCar.isEnabled = !it
+            binding.AddCar.isEnabled = it
         }
 
         binding.AddCar.setOnClickListener {
