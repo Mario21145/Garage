@@ -111,10 +111,17 @@ class HomeFragment : Fragment() {
             }
         }
 
-
+        sharedViewModel.isInternetAvailable(requireContext())
+        sharedViewModel.isInternetAvailable.observe(viewLifecycleOwner){
+            binding.AddCar.isEnabled = it
+        }
 
         binding.AddCar.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_addCarFragment)
+            if(binding.AddCar.isEnabled){
+                findNavController().navigate(R.id.action_homeFragment_to_addCarFragment)
+            } else {
+                Log.d("State" , "No connection")
+            }
         }
 
         binding.SearchCar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

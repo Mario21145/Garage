@@ -2,6 +2,8 @@ package com.example.garage.viewmodels
 
 import android.app.Application
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
@@ -40,6 +42,9 @@ class CarViewModel(private val carDao: CarDao) : ViewModel() {
 
     private val _uptadedcar = MutableLiveData<List<CarDb>>()
     val updatedCar: MutableLiveData<List<CarDb>> = _uptadedcar
+
+    private val _isInternetAvailable = MutableLiveData<Boolean>()
+    val isInternetAvailable: LiveData<Boolean> = _isInternetAvailable
 
     val notifications: LiveData<List<NotificationDb>> = carDao.getNotifications().asLiveData()
 
@@ -156,6 +161,24 @@ class CarViewModel(private val carDao: CarDao) : ViewModel() {
                 carDao.insertNotification(notification)
             }
     }
+
+    fun isInternetAvailable(context: Context) {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network)
+
+        if (activeNetwork != null) {
+            val isAvailable = when {
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                else -> false
+            }
+            _isInternetAvailable.postValue(isAvailable)
+        } else {
+            _isInternetAvailable.postValue(false)
+        }
+    }
+
 
     fun makeToast(context: Context, msg: String, duration: Int) {
         Toast.makeText(context, msg, duration).show()

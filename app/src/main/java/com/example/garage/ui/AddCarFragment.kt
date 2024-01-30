@@ -39,15 +39,13 @@ class AddCarFragment : Fragment() {
     }
     private lateinit var binding: FragmentAddCarBinding
 
-    private var isDataInserted = false
-
     private lateinit var carBrand: String
     private lateinit var carName: String
     private lateinit var carCubicCapacity: String
     private lateinit var carFuel: String
     private lateinit var carKm: String
     private lateinit var carDescription: String
-    var currentYear by Delegates.notNull<Int>()
+    private var currentYear by Delegates.notNull<Int>()
     private var selectedYear: Int? = null
     private lateinit var logo: String
 
@@ -58,7 +56,22 @@ class AddCarFragment : Fragment() {
     ): View {
         setHasOptionsMenu(false)
         (activity as AppCompatActivity?)?.supportActionBar?.hide()
+
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_car, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+            binding.apply {
+                viewModel = sharedViewModel
+                lifecycleOwner = this@AddCarFragment
+            }
+
+        val dataSet = Dataset()
+
+
 
         val carYear: NumberPicker = binding.carYear
         currentYear = Calendar.getInstance().get(Calendar.YEAR)
@@ -69,27 +82,9 @@ class AddCarFragment : Fragment() {
         carYear.maxValue = currentYear
         val displayValues = Array(51) { (currentYear - 50 + it).toString() }
         carYear.displayedValues = displayValues
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.apply {
-            viewModel = sharedViewModel
-            lifecycleOwner = this@AddCarFragment
-        }
-
-        carBrand = ""
-        carName = ""
-        carCubicCapacity = ""
-        carFuel = ""
-        carKm = ""
-        carDescription = ""
-        logo = ""
 
 
-        val dataSet = Dataset()
+
 
         if (savedInstanceState != null) {
             Log.d("State", "Stato e: $savedInstanceState")
@@ -122,6 +117,19 @@ class AddCarFragment : Fragment() {
             }
 
         } else {
+            carBrand = ""
+            carName = ""
+            carCubicCapacity = ""
+            carFuel = ""
+            carKm = ""
+            carDescription = ""
+            logo = ""
+        }
+
+
+
+
+
             val adapterFuels = ArrayAdapter(
                 requireContext(),
                 android.R.layout.simple_spinner_dropdown_item,
@@ -129,9 +137,6 @@ class AddCarFragment : Fragment() {
             )
             binding.filledExposedDropdownFuel.setAdapter(adapterFuels)
 
-            //Text inputs
-            val carModelLabel = binding.carNameLabel
-            carName = carModelLabel.editText?.text.toString()
 
             val dropdownBrand = binding.filledExposedDropdownBrand
             sharedViewModel.carLogos.observe(viewLifecycleOwner) { carList ->
@@ -152,26 +157,36 @@ class AddCarFragment : Fragment() {
 
             }
 
-            val carCubicCapacityLabel = binding.carCubicCapacityLabel
-            carCubicCapacity = carCubicCapacityLabel.editText?.text.toString()
 
             val dropdownFuel = binding.filledExposedDropdownFuel
             dropdownFuel.setOnItemClickListener { _, _, position, _ ->
                 carFuel = dropdownFuel.adapter.getItem(position).toString()
             }
 
-            val carKmLabel = binding.carKmLabel
-            carKm = carKmLabel.editText?.text.toString()
 
-            val carDescriptionLabel = binding.carDescriptionLabel
-            carDescription = carDescriptionLabel.editText?.text.toString()
-        }
+
 
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
         }
 
         binding.InsertButton.setOnClickListener {
+
+            carName = binding.carNameLabel.editText?.text.toString()
+            carCubicCapacity = binding.carCubicCapacityLabel.editText?.text.toString()
+            carKm = binding.carKmLabel.editText?.text.toString()
+            carDescription = binding.carDescriptionLabel.editText?.text.toString()
+
+            val carYear: NumberPicker = binding.carYear
+            currentYear = Calendar.getInstance().get(Calendar.YEAR)
+            selectedYear?.let {
+                currentYear = it
+            }
+            carYear.minValue = currentYear - 50
+            carYear.maxValue = currentYear
+            val displayValues = Array(51) { (currentYear - 50 + it).toString() }
+            carYear.displayedValues = displayValues
+
             if (carName.isNotEmpty() && carBrand.isNotEmpty() && carCubicCapacity.isNotEmpty() && carFuel.isNotEmpty() && carKm.isNotEmpty() && carDescription.isNotEmpty()) {
                 lifecycleScope.launch(Dispatchers.IO) {
                     val car = CarDb(
@@ -182,14 +197,14 @@ class AddCarFragment : Fragment() {
                         carFuel,
                         carKm,
                         carDescription,
-                        currentYear.toString(),
+                        carYear.value.toString(),
                         logo
                     )
                     sharedViewModel.insertCar(car)
-                    isDataInserted = true
                 }
                 findNavController().navigate(R.id.action_addCarFragment_to_homeFragment)
             } else {
+                Log.d("Data" ,"${carName} , ${carBrand} ,${carCubicCapacity} , ${carFuel} , ${carKm} ,${carDescription}" )
                 context?.let { it1 ->
                     sharedViewModel.makeToast(
                         it1,
@@ -217,7 +232,7 @@ class AddCarFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         Log.d("State", "Stato e: $outState")
-        if (::binding.isInitialized && !isDataInserted) {
+        if (::binding.isInitialized) {
             outState.putString("carName", binding.carNameLabel.editText?.text.toString())
             outState.putString("cubicCapacity", binding.carCubicCapacityLabel.editText?.text.toString())
             outState.putString("carKm", binding.carKmLabel.editText?.text.toString())
@@ -225,7 +240,6 @@ class AddCarFragment : Fragment() {
             outState.putString("selectedFuelPosition", carFuel)
             outState.putString("selectedBrandPosition", carBrand)
             outState.putString("logo", logo)
-
             val carYearSaved: NumberPicker = binding.carYear
             outState.putInt("selectedYear", carYearSaved.value)
         }
