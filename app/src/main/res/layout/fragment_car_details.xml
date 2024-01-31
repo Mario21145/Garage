@@ -14,11 +14,20 @@
 
     </data>
 
+
+
+
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.CarDetailsFragment">
 
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -101,8 +110,8 @@
 
 
             <ScrollView
-                android:layout_width="300dp"
-                android:layout_height="450dp"
+                android:layout_width="wrap_content"
+                android:layout_height="400dp"
                 app:layout_constraintBottom_toTopOf="@+id/carSection"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -119,18 +128,28 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
 
+                    <ImageView
+                        android:id="@+id/carImageElement"
+                        android:layout_width="wrap_content"
+                        android:layout_height="200dp"
+                        android:cropToPadding="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@drawable/icons8_image_64" />
 
                     <TextView
                         android:id="@+id/carBrandDetails"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="100dp"
+                        android:layout_marginTop="20dp"
                         android:textSize="25sp"
                         android:textStyle="bold"
                         android:visibility="visible"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
+
+                        app:layout_constraintEnd_toEndOf="@+id/carImageElement"
+                        app:layout_constraintStart_toStartOf="@+id/carImageElement"
+                        app:layout_constraintTop_toBottomOf="@id/carImageElement"
                         tools:text="Ferrari" />
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -139,12 +158,12 @@
                         android:layout_width="170dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:layout_marginTop="60dp"
+                        android:layout_marginTop="20dp"
                         android:hint="@string/hintCarModel"
                         android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
+                        app:layout_constraintEnd_toEndOf="@id/carImageElement"
+                        app:layout_constraintStart_toStartOf="@id/carImageElement"
+                        app:layout_constraintTop_toBottomOf="@id/carImageElement">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/car_brand"
@@ -339,7 +358,6 @@
             </ScrollView>
 
 
-
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/deleteCar"
                 android:layout_width="50dp"
@@ -350,6 +368,21 @@
                 app:layout_constraintBottom_toTopOf="@id/carSection"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_margin="15dp"
+                />
+
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/addImageCar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:fabCustomSize="50dp"
+                android:src="@drawable/add_icon"
+                app:tint ="@color/white"
+                app:layout_constraintBottom_toTopOf="@id/confirmCar"
+                app:layout_constraintEnd_toEndOf="@+id/confirmCar"
+                app:layout_constraintStart_toStartOf="@+id/confirmCar"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone"
                 />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -393,6 +426,8 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+        </ScrollView>
 
     </FrameLayout>
 </layout>

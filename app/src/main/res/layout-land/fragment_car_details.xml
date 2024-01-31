@@ -33,18 +33,29 @@
                 android:textAlignment="center"
                 >
 
+                <ImageView
+                    android:id="@+id/carImageElement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:cropToPadding="true"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/icons8_image_64" />
+
                 <TextView
                     android:id="@+id/carBrandDetails"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintEnd_toEndOf="@+id/carImageElement"
 
+                    app:layout_constraintStart_toStartOf="@+id/carImageElement"
+                    app:layout_constraintTop_toBottomOf="@id/carImageElement"
                     tools:text="Ferrari" />
 
                 <com.google.android.material.textfield.TextInputLayout

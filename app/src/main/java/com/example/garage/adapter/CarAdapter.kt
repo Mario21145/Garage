@@ -55,8 +55,8 @@ class CarAdapter(viewModel: CarViewModel, private val clickListener: (CarDb) -> 
         holder.carYear.text = car.year
         holder.carDescription.text = car.description
 
-        val bmp = car.imageLogo?.let { BitmapFactory.decodeByteArray(car.imageLogo, 0, it.size) }
-        holder.carLogo.setImageBitmap(bmp)
+        val bmpLogo = car.imageLogo?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+        holder.carLogo.setImageBitmap(bmpLogo)
 
         holder.infoButton.setOnClickListener {
             clickListener(car)
