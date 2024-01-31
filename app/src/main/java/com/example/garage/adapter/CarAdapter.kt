@@ -69,7 +69,6 @@ class CarAdapter(viewModel: CarViewModel, private val clickListener: (CarDb) -> 
         }
 
         override fun areContentsTheSame(oldItem: CarDb, newItem: CarDb): Boolean {
-            // Adjust this based on your equality criteria
             return oldItem == newItem
         }
     }

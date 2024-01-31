@@ -66,50 +66,34 @@ class CarDetailsFragment : Fragment() {
 
         val currentCar = sharedViewModel.updatedCar
 
-        sharedViewModel.carList.observe(viewLifecycleOwner) { it ->
-            if(sharedViewModel.carList.value.isNullOrEmpty()){
-                    binding.root.visibility = GONE
-                } else {
-                    binding.root.visibility = VISIBLE
-                    if (it.isNotEmpty()) {
-                        binding.carBrandDetails.text = getString(R.string.model, it[0].model)
-                        binding.carCubicCapacityDetails.text = getString(R.string.cubicCapacity, it[0].cubicCapacity)
-                        binding.carFuelDetails.text = getString(R.string.fuel, it[0].powerSupply)
-                        binding.carKmDetails.text = getString(R.string.km, it[0].km)
-                        binding.carDescriptionDetails.text = getString(R.string.description, it[0].description)
-                        binding.carYearDetails.text = getString(R.string.year, it[0].year)
-                        binding.carModelDetails?.text = it[0].model
-
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            val logoUrl = sharedViewModel.downloadImage(it[0].logo)
-                            val bmp = it[0].let { BitmapFactory.decodeByteArray(logoUrl, 0, logoUrl.size) }
-
-                            withContext(Dispatchers.Main) {
-                                binding.carLogoDetails?.setImageBitmap(bmp)
-                            }
-                        }
-
-                    }
-                }
+        sharedViewModel.carList.observe(viewLifecycleOwner) { cars ->
+            binding.root.visibility = VISIBLE
+            if (cars.isNotEmpty()) {
+                val car = cars[0]
+                binding.carBrandDetails.text = getString(R.string.model, car.model)
+                binding.carCubicCapacityDetails.text = getString(R.string.cubicCapacity, car.cubicCapacity)
+                binding.carFuelDetails.text = getString(R.string.fuel, car.powerSupply)
+                binding.carKmDetails.text = getString(R.string.km, car.km)
+                binding.carDescriptionDetails.text = getString(R.string.description, car.description)
+                binding.carYearDetails.text = getString(R.string.year, car.year)
+                binding.carModelDetails?.text = car.model
+                val bmp = car.imageLogo?.let { BitmapFactory.decodeByteArray(car.imageLogo, 0, it.size) }
+                binding.carLogoDetails?.setImageBitmap(bmp)
+            }
         }
 
-
-        sharedViewModel.updatedCar.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                binding.carBrandDetails.text = getString(R.string.model, it[0].model)
-                binding.carCubicCapacityDetails.text = getString(R.string.cubicCapacity, it[0].cubicCapacity)
-                binding.carFuelDetails.text = getString(R.string.fuel, it[0].powerSupply)
-                binding.carKmDetails.text = getString(R.string.km, it[0].km)
-                binding.carDescriptionDetails.text = getString(R.string.description, it[0].description)
-                binding.carYearDetails.text = getString(R.string.year, it[0].year)
-                binding.carModelDetails?.text = it[0].Brand
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val logoUrl = sharedViewModel.downloadImage(it[0].logo)
-                    val bmp = it[0].let { BitmapFactory.decodeByteArray(logoUrl, 0, logoUrl.size) }
-                    withContext(Dispatchers.Main) {
-                        binding.carLogoDetails?.setImageBitmap(bmp)
-                    }
-                }
+        sharedViewModel.updatedCar.observe(viewLifecycleOwner) { updatedCar ->
+            if (updatedCar.isNotEmpty()) {
+                val car = updatedCar[0]
+                binding.carBrandDetails.text = getString(R.string.model, car.model)
+                binding.carCubicCapacityDetails.text = getString(R.string.cubicCapacity, car.cubicCapacity)
+                binding.carFuelDetails.text = getString(R.string.fuel, car.powerSupply)
+                binding.carKmDetails.text = getString(R.string.km, car.km)
+                binding.carDescriptionDetails.text = getString(R.string.description, car.description)
+                binding.carYearDetails.text = getString(R.string.year, car.year)
+                binding.carModelDetails?.text = car.Brand
+                val bmp = car.imageLogo?.let { BitmapFactory.decodeByteArray(car.imageLogo, 0, it.size) }
+                binding.carLogoDetails?.setImageBitmap(bmp)
             }
         }
 
@@ -195,16 +179,15 @@ class CarDetailsFragment : Fragment() {
                 sharedViewModel.setCurrentCar(carUpdated)
 
                 lifecycleScope.launch(Dispatchers.IO) {
-                    sharedViewModel.scheduleReminder(requireContext() , carUpdated , k)
+                    sharedViewModel.scheduleReminder(requireContext(), carUpdated, k)
                     sharedViewModel.updateCar(carUpdated)
-                    val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    val imm =
+                        view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(view.windowToken, 0)
                 }
 
             }
         }
-
-
 
 
     }
@@ -248,7 +231,8 @@ class CarDetailsFragment : Fragment() {
                             dataSet.typeFuels
                         )
                         dropdown.setAdapter(adapterFuels)
-                        val fuelIndex = dataSet.typeFuels.indexOf(currentCar.value?.get(0)?.powerSupply ?: "")
+                        val fuelIndex =
+                            dataSet.typeFuels.indexOf(currentCar.value?.get(0)?.powerSupply ?: "")
                         if (fuelIndex != -1) {
                             dropdown.setText(adapterFuels.getItem(fuelIndex), false)
                         } else {
