@@ -256,22 +256,58 @@
                 />
 
 
+            <ImageView
+                android:id="@+id/CarImageIcon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:layout_constraintBottom_toBottomOf="@id/car_image"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/car_image"
+                app:srcCompat="@drawable/icons8_image_64" />
+
+            <Button
+                android:id="@+id/car_image"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:descendantFocusability="blocksDescendants"
+                android:text="@string/pickImage"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/car_year" />
+
+            <ImageView
+                android:id="@+id/carImageFromGallery"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:visibility="gone"
+                android:layout_marginTop="20dp"
+                android:cropToPadding="true"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/car_image"
+                tools:src="@drawable/icons8_image_64"
+                tools:visibility="visible" />
+
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/backButton"
                 android:layout_width="150dp"
                 android:layout_height="60dp"
-                android:text="back"
+                android:text="@string/back"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/car_year" />
+                app:layout_constraintTop_toBottomOf="@+id/carImageFromGallery" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/InsertButton"
                 android:layout_width="150dp"
                 android:layout_height="60dp"
-                android:text="Add"
+                android:text="@string/add"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/backButton" />

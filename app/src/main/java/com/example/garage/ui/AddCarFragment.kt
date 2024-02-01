@@ -1,17 +1,24 @@
 package com.example.garage.ui
 
 import android.app.Application
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.NumberPicker
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isNotEmpty
 import androidx.databinding.DataBindingUtil
@@ -52,7 +59,7 @@ class AddCarFragment : Fragment() {
     private var currentYear by Delegates.notNull<Int>()
     private var selectedYear: Int? = null
     private lateinit var logo: String
-
+    private var imageCarGallery: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -86,9 +93,6 @@ class AddCarFragment : Fragment() {
         carYear.maxValue = currentYear
         val displayValues = Array(51) { (currentYear - 50 + it).toString() }
         carYear.displayedValues = displayValues
-
-
-
 
         if (savedInstanceState != null) {
             Log.d("State", "Stato e: $savedInstanceState")
@@ -130,10 +134,6 @@ class AddCarFragment : Fragment() {
             logo = ""
         }
 
-
-
-
-
             val adapterFuels = ArrayAdapter(
                 requireContext(),
                 android.R.layout.simple_spinner_dropdown_item,
@@ -161,26 +161,34 @@ class AddCarFragment : Fragment() {
 
             }
 
-
             val dropdownFuel = binding.filledExposedDropdownFuel
             dropdownFuel.setOnItemClickListener { _, _, position, _ ->
                 carFuel = dropdownFuel.adapter.getItem(position).toString()
             }
 
 
+        val imagePickerContract = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            if (uri != null) {
+                binding.carImageFromGallery.visibility = View.VISIBLE
+                binding.carImageFromGallery.setImageURI(uri)
+                imageCarGallery = uri
+                Log.d("Image", "Image setted")
+            }
+        }
 
+        binding.carImage.setOnClickListener {
+            imagePickerContract.launch("image/*")
+        }
 
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
         }
 
         binding.InsertButton.setOnClickListener {
-
             carName = binding.carNameLabel.editText?.text.toString()
             carCubicCapacity = binding.carCubicCapacityLabel.editText?.text.toString()
             carKm = binding.carKmLabel.editText?.text.toString()
             carDescription = binding.carDescriptionLabel.editText?.text.toString()
-
             val carYear: NumberPicker = binding.carYear
             currentYear = Calendar.getInstance().get(Calendar.YEAR)
             selectedYear?.let {
@@ -203,7 +211,12 @@ class AddCarFragment : Fragment() {
                         carDescription,
                         carYear.value.toString(),
                         logo,
-                        sharedViewModel.downloadImage(logo)
+                        sharedViewModel.urlToByteArray(logo),
+                        imageCarGallery?.let { it1 ->
+                            sharedViewModel.uriToByteArray(requireContext() ,
+                                it1
+                            )
+                        },
                     )
                     sharedViewModel.insertCar(car)
                 }
@@ -221,8 +234,7 @@ class AddCarFragment : Fragment() {
         }
 
         //Icons dark Mode
-        val isDarkTheme =
-            resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        val isDarkTheme = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         if (isDarkTheme) {
             binding.carModelIcon.setColorFilter(Color.argb(255, 255, 255, 255))
             binding.cubicCapacityIcon.setColorFilter(Color.argb(255, 255, 255, 255))
@@ -230,6 +242,7 @@ class AddCarFragment : Fragment() {
             binding.carKmIcon.setColorFilter(Color.argb(255, 255, 255, 255))
             binding.CarDescriptionIcon.setColorFilter(Color.argb(255, 255, 255, 255))
             binding.CarYearIcon.setColorFilter(Color.argb(255, 255, 255, 255))
+            binding.CarImageIcon?.setColorFilter(Color.argb(255, 255, 255, 255))
         }
     }
 
@@ -248,8 +261,4 @@ class AddCarFragment : Fragment() {
             outState.putInt("selectedYear", carYearSaved.value)
         }
     }
-
-
-
-
 }

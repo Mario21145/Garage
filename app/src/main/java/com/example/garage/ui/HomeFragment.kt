@@ -76,7 +76,9 @@ class HomeFragment : Fragment() {
 
             if (resources.configuration.screenWidthDp > 600) {
                 if (sharedViewModel.carList.value!!.isNotEmpty()) {
-                    sharedViewModel.setCurrentCar(cars[0])
+                    if(sharedViewModel.carList.value?.size != 0){
+                        sharedViewModel.setCurrentCar(cars[0])
+                    }
                 }
             }
 
@@ -114,8 +116,6 @@ class HomeFragment : Fragment() {
         binding.AddCar.setOnClickListener {
             if (binding.AddCar.isEnabled) {
                 findNavController().navigate(R.id.action_homeFragment_to_addCarFragment)
-            } else {
-                Log.d("State", "No connection")
             }
         }
 

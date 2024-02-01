@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
@@ -27,6 +28,7 @@ import com.example.garage.workers.CarServiceRememberWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.io.InputStream
 import java.net.URL
 
@@ -172,26 +174,47 @@ class CarViewModel(private val carDao: CarDao) : ViewModel() {
         }
     }
 
-    fun downloadImage(imageUrl: String): ByteArray {
-        val url = URL(imageUrl)
-        val connection = url.openConnection()
-        connection.connect()
+    fun urlToByteArray(imageUrl: String): ByteArray {
+            val url = URL(imageUrl)
+            val connection = url.openConnection()
+            connection.connect()
 
-        val input: InputStream = connection.getInputStream()
-        val output = ByteArrayOutputStream()
+            val input: InputStream = connection.getInputStream()
+            val output = ByteArrayOutputStream()
 
-        val buffer = ByteArray(4096)
-        var bytesRead: Int
+            val buffer = ByteArray(4096)
+            var bytesRead: Int
 
-        try {
-            while (input.read(buffer).also { bytesRead = it } != -1) {
-                output.write(buffer, 0, bytesRead)
+            try {
+                while (input.read(buffer).also { bytesRead = it } != -1) {
+                    output.write(buffer, 0, bytesRead)
+                }
+            } finally {
+                input.close()
             }
-        } finally {
-            input.close()
-        }
-
         return output.toByteArray()
+    }
+
+
+    fun uriToByteArray(context: Context, uri: Uri): ByteArray {
+        try {
+            val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+            val buffer = ByteArrayOutputStream()
+
+            inputStream?.use { input ->
+                val bufferSize = 4096
+                val byteArray = ByteArray(bufferSize)
+                var bytesRead: Int
+
+                while (input.read(byteArray, 0, bufferSize).also { bytesRead = it } != -1) {
+                    buffer.write(byteArray, 0, bytesRead)
+                }
+            }
+            return buffer.toByteArray()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return ByteArray(0)
+        }
     }
 
 
