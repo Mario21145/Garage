@@ -113,7 +113,6 @@ class CarViewModel(private val carDao: CarDao) : ViewModel() {
 
 
     // CRUD OPERATIONS NOTIFICATIONS
-
     fun clearNotifications(){
         viewModelScope.launch(Dispatchers.IO) {
             carDao.deleteAllNotifications()

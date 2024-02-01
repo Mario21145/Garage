@@ -37,7 +37,7 @@ class HomeFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var adapter: CarAdapter
+    private lateinit var adapter : CarAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -82,20 +82,26 @@ class HomeFragment : Fragment() {
                 }
             }
 
-             adapter = CarAdapter(sharedViewModel) { car ->
-                val slidingPanelayoutCar = binding.slidingPaneLayoutCarDetails
-                val slidingPanel = binding.HomeRecyclerView
-                if (resources.configuration.screenWidthDp > 600) {
-                    slidingPanel.visibility = View.VISIBLE
-                    slidingPanelayoutCar?.openPane()
-                    sharedViewModel.setCurrentCar(car)
-                } else {
-                    binding.slidingPaneLayoutCarDetails?.visibility = View.GONE
-                    sharedViewModel.setCurrentCar(car)
-                    findNavController().navigate(R.id.action_homeFragment_to_carDetailsFragment)
+            if (::adapter.isInitialized) {
+                adapter.submitList(sharedViewModel.carList.value)
+            } else {
+                adapter = CarAdapter(sharedViewModel) { car ->
+                    val slidingPanelayoutCar = binding.slidingPaneLayoutCarDetails
+                    val slidingPanel = binding.HomeRecyclerView
+                    if (resources.configuration.screenWidthDp > 600) {
+                        slidingPanel.visibility = View.VISIBLE
+                        slidingPanelayoutCar?.openPane()
+                        sharedViewModel.setCurrentCar(car)
+                    } else {
+                        binding.slidingPaneLayoutCarDetails?.visibility = View.GONE
+                        sharedViewModel.setCurrentCar(car)
+                        findNavController().navigate(R.id.action_homeFragment_to_carDetailsFragment)
+                    }
                 }
+                binding.HomeRecyclerView.adapter = adapter
             }
-            binding.HomeRecyclerView.adapter = adapter
+
+
         }
 
         sharedViewModel.notifications.observe(viewLifecycleOwner) {
@@ -119,28 +125,22 @@ class HomeFragment : Fragment() {
             }
         }
 
-        binding.SearchCar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+        if(::adapter.isInitialized){
+            binding.SearchCar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                adapter.submitList(
-                    sharedViewModel.carList.value?.filter { car ->
-                        car.Brand.startsWith(newText.toString(), true) ||
-                                car.model.startsWith(newText.toString(), true)
-                    }
-                )
-
-                return true
-            }
-
-        })
-
-        binding.SearchCar.setOnCloseListener {
-            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-            true
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    adapter.submitList(
+                        sharedViewModel.carList.value?.filter { car ->
+                            car.Brand.startsWith(newText.toString(), true) ||
+                                    car.model.startsWith(newText.toString(), true)
+                        }
+                    )
+                    return true
+                }
+            })
         }
 
         binding.notificationIcon.setOnClickListener {

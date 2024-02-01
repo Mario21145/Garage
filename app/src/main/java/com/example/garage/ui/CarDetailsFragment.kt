@@ -23,6 +23,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
@@ -54,17 +55,26 @@ class CarDetailsFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentCarDetailsBinding
-    private lateinit var uriResult: Uri
-    private val imagePickerContract = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        if (uri != null) {
-            val compressedBitmap = compressAndResizeImage(uri)
-            val imageUri = bitmapToUri(compressedBitmap)
-            binding.carImageElement.setImageURI(imageUri)
-            if (imageUri != null) {
-                uriResult = imageUri
+    private var uriResult: Uri = Uri.EMPTY
+    private val imagePickerContract =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        val compressedBitmap = compressAndResizeImage(uri)
+                        val imageUri = bitmapToUri(compressedBitmap)
+                        withContext(Dispatchers.Main) {
+                            binding.carImageElement.setImageURI(imageUri)
+                            uriResult = imageUri
+                        }
+                    } catch (e: Exception) {
+                        Log.e("ImagePicker", "Error processing image", e)
+                    }
+                }
             }
         }
-    }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -89,15 +99,19 @@ class CarDetailsFragment : Fragment() {
             if (cars.isNotEmpty()) {
                 val car = cars[0]
                 binding.carBrandDetails.text = getString(R.string.model, car.model)
-                binding.carCubicCapacityDetails.text = getString(R.string.cubicCapacity, car.cubicCapacity)
+                binding.carCubicCapacityDetails.text =
+                    getString(R.string.cubicCapacity, car.cubicCapacity)
                 binding.carFuelDetails.text = getString(R.string.fuel, car.powerSupply)
                 binding.carKmDetails.text = getString(R.string.km, car.km)
-                binding.carDescriptionDetails.text = getString(R.string.description, car.description)
+                binding.carDescriptionDetails.text =
+                    getString(R.string.description, car.description)
                 binding.carYearDetails.text = getString(R.string.year, car.year)
                 binding.carModelDetails?.text = car.model
-                val bmpLogo = car.imageLogo?.let { BitmapFactory.decodeByteArray(car.imageLogo, 0, it.size) }
+                val bmpLogo =
+                    car.imageLogo?.let { BitmapFactory.decodeByteArray(car.imageLogo, 0, it.size) }
                 binding.carLogoDetails?.setImageBitmap(bmpLogo)
-                val bmpCarImage = car.imageCar?.let { BitmapFactory.decodeByteArray(car.imageCar, 0, it.size) }
+                val bmpCarImage =
+                    car.imageCar?.let { BitmapFactory.decodeByteArray(car.imageCar, 0, it.size) }
                 binding.carImageElement.setImageBitmap(bmpCarImage)
             }
         }
@@ -106,15 +120,19 @@ class CarDetailsFragment : Fragment() {
             if (updatedCar.isNotEmpty()) {
                 val car = updatedCar[0]
                 binding.carBrandDetails.text = getString(R.string.model, car.model)
-                binding.carCubicCapacityDetails.text = getString(R.string.cubicCapacity, car.cubicCapacity)
+                binding.carCubicCapacityDetails.text =
+                    getString(R.string.cubicCapacity, car.cubicCapacity)
                 binding.carFuelDetails.text = getString(R.string.fuel, car.powerSupply)
                 binding.carKmDetails.text = getString(R.string.km, car.km)
-                binding.carDescriptionDetails.text = getString(R.string.description, car.description)
+                binding.carDescriptionDetails.text =
+                    getString(R.string.description, car.description)
                 binding.carYearDetails.text = getString(R.string.year, car.year)
                 binding.carModelDetails?.text = car.Brand
-                val bmp = car.imageLogo?.let { BitmapFactory.decodeByteArray(car.imageLogo, 0, it.size) }
+                val bmp =
+                    car.imageLogo?.let { BitmapFactory.decodeByteArray(car.imageLogo, 0, it.size) }
                 binding.carLogoDetails?.setImageBitmap(bmp)
-                val bmpCarImage = car.imageCar?.let { BitmapFactory.decodeByteArray(car.imageCar, 0, it.size) }
+                val bmpCarImage =
+                    car.imageCar?.let { BitmapFactory.decodeByteArray(car.imageCar, 0, it.size) }
                 binding.carImageElement.setImageBitmap(bmpCarImage)
             }
         }
@@ -123,7 +141,7 @@ class CarDetailsFragment : Fragment() {
             if (binding.deleteCar.visibility == INVISIBLE && binding.editCar.visibility == INVISIBLE) {
                 binding.deleteCar.visibility = VISIBLE
                 binding.editCar.visibility = VISIBLE
-                binding.addImageCar?.visibility  = INVISIBLE
+                binding.addImageCar.visibility = INVISIBLE
                 binding.confirmCar.visibility = INVISIBLE
 
                 setEditTextVisibility(false, currentCar)
@@ -160,13 +178,13 @@ class CarDetailsFragment : Fragment() {
             binding.deleteCar.visibility = INVISIBLE
             binding.editCar.visibility = INVISIBLE
             binding.confirmCar.visibility = VISIBLE
-            binding.addImageCar?.visibility = VISIBLE
+            binding.addImageCar.visibility = VISIBLE
 
             setEditTextVisibility(true, currentCar)
             setTextViewVisibility(false)
         }
 
-        binding.addImageCar?.setOnClickListener{
+        binding.addImageCar.setOnClickListener {
             imagePickerContract.launch("image/*")
         }
 
@@ -177,6 +195,13 @@ class CarDetailsFragment : Fragment() {
                 binding.carDescription.text?.isNotEmpty() == true && binding.carYear.text?.isNotEmpty() == true
             ) {
                 lifecycleScope.launch(Dispatchers.IO) {
+
+                    val imageCarByteArray = if (uriResult != Uri.EMPTY) {
+                        sharedViewModel.uriToByteArray(requireContext(), uriResult)
+                    } else {
+                        currentCar.value?.get(0)?.imageCar
+                    }
+
                     val model = binding.carBrand.text.toString()
                     val cubicCapacity = binding.carCubicCapacity.text.toString()
                     val fuel = binding.filledExposedDropdownFuel.text.toString()
@@ -194,28 +219,30 @@ class CarDetailsFragment : Fragment() {
                         description,
                         year,
                         currentCar.value?.get(0)?.logo ?: "",
-                        currentCar.value?.get(0)?.logo?.let { it1 -> sharedViewModel.urlToByteArray(it1) },
-                        currentCar.value?.get(0)?.imageCar?.let { _ -> sharedViewModel.uriToByteArray(requireContext() , uriResult) },
+                        currentCar.value?.get(0)?.logo?.let { it1 ->
+                            sharedViewModel.urlToByteArray(
+                                it1
+                            )
+                        },
+                        imageCarByteArray
                     )
 
-                    withContext(Dispatchers.Main){
+                    sharedViewModel.updateCar(carUpdated)
+                    val KM = currentCar.value!![0].km
+                    sharedViewModel.scheduleReminder(requireContext(), carUpdated, KM)
+                    withContext(Dispatchers.Main) {
                         binding.confirmCar.visibility = INVISIBLE
                         binding.deleteCar.visibility = VISIBLE
                         binding.editCar.visibility = VISIBLE
                         setEditTextVisibility(false, currentCar)
                         setTextViewVisibility(true)
-                        val KM = currentCar.value!![0].km
                         sharedViewModel.clearCurrentCar()
                         sharedViewModel.setCurrentCar(carUpdated)
-                        sharedViewModel.scheduleReminder(requireContext(), carUpdated, KM)
-                        sharedViewModel.updateCar(carUpdated)
-                        if (resources.configuration.screenWidthDp > 600){
-                            binding.addImageCar?.visibility = GONE
+                        if (resources.configuration.screenWidthDp > 600) {
+                            binding.addImageCar.visibility = GONE
                         }
                     }
                 }
-
-
             }
         }
     }
@@ -300,7 +327,8 @@ class CarDetailsFragment : Fragment() {
     }
 
     private fun compressAndResizeImage(uri: Uri): Bitmap {
-        val originalBitmap = BitmapFactory.decodeStream(requireContext().contentResolver.openInputStream(uri))
+        val originalBitmap =
+            BitmapFactory.decodeStream(requireContext().contentResolver.openInputStream(uri))
         val maxWidth = 800
         val maxHeight = 600
         val originalWidth = originalBitmap.width
@@ -313,7 +341,8 @@ class CarDetailsFragment : Fragment() {
         val matrix = Matrix()
         matrix.postScale(scaleFactor, scaleFactor)
 
-        val resizedBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalWidth, originalHeight, matrix, false)
+        val resizedBitmap =
+            Bitmap.createBitmap(originalBitmap, 0, 0, originalWidth, originalHeight, matrix, false)
         val outputStream = ByteArrayOutputStream()
 
         resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
@@ -321,7 +350,7 @@ class CarDetailsFragment : Fragment() {
     }
 
 
-    private fun  bitmapToUri(inImage: Bitmap): Uri {
+    private fun bitmapToUri(inImage: Bitmap): Uri {
 
         val tempFile = File.createTempFile("temprentpk", ".png")
         val bytes = ByteArrayOutputStream()

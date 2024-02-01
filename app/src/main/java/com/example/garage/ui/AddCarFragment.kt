@@ -20,6 +20,7 @@ import android.widget.NumberPicker
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.core.view.isNotEmpty
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -106,6 +107,9 @@ class AddCarFragment : Fragment() {
             carYear.value = currentYear
             carDescription = savedInstanceState.getString("carDescription", "")
             logo = savedInstanceState.getString("logo", "")
+            imageCarGallery = savedInstanceState.getString("carImageGallery" , "").toString().toUri()
+            binding.carImageFromGallery.visibility = View.VISIBLE
+            binding.carImageFromGallery.setImageURI(imageCarGallery)
 
             val adapterFuels = ArrayAdapter(
                 requireContext(),
@@ -132,6 +136,7 @@ class AddCarFragment : Fragment() {
             carKm = ""
             carDescription = ""
             logo = ""
+            imageCarGallery = null
         }
 
             val adapterFuels = ArrayAdapter(
@@ -181,7 +186,7 @@ class AddCarFragment : Fragment() {
         }
 
         binding.backButton.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.action_addCarFragment_to_homeFragment)
         }
 
         binding.InsertButton.setOnClickListener {
@@ -199,7 +204,7 @@ class AddCarFragment : Fragment() {
             val displayValues = Array(51) { (currentYear - 50 + it).toString() }
             carYear.displayedValues = displayValues
 
-            if (carName.isNotEmpty() && carBrand.isNotEmpty() && carCubicCapacity.isNotEmpty() && carFuel.isNotEmpty() && carKm.isNotEmpty() && carDescription.isNotEmpty()) {
+            if (carName.isNotEmpty() && carBrand.isNotEmpty() && carCubicCapacity.isNotEmpty() && carFuel.isNotEmpty() && carKm.isNotEmpty() && carDescription.isNotEmpty() && imageCarGallery != null) {
                 lifecycleScope.launch(Dispatchers.IO) {
                     val car = CarDb(
                         null,
@@ -259,6 +264,7 @@ class AddCarFragment : Fragment() {
             outState.putString("logo", logo)
             val carYearSaved: NumberPicker = binding.carYear
             outState.putInt("selectedYear", carYearSaved.value)
+            outState.putString("carImageGallery" , imageCarGallery.toString())
         }
     }
 }
