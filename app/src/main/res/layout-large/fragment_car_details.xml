@@ -33,6 +33,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
 
+                <ImageView
+                    android:id="@+id/carImageElement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:cropToPadding="true"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/icons8_image_64" />
+
 
                 <TextView
                     android:id="@+id/carBrandDetails"
@@ -42,9 +53,10 @@
                     android:textSize="40sp"
                     android:textStyle="bold"
                     android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+
+                    app:layout_constraintEnd_toEndOf="@+id/carImageElement"
+                    app:layout_constraintStart_toStartOf="@+id/carImageElement"
+                    app:layout_constraintTop_toBottomOf="@id/carImageElement"
                     tools:text="Ferrari" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -56,7 +68,6 @@
                     android:layout_marginTop="40dp"
                     android:hint="@string/hintCarModel"
                     android:visibility="gone"
-                    tools:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -94,7 +105,6 @@
                     android:layout_marginTop="20dp"
                     android:hint="@string/hintCubicCapacity"
                     android:visibility="gone"
-                    tools:visibility="visible"
                     app:layout_constraintEnd_toEndOf="@+id/car_brand_label"
                     app:layout_constraintStart_toStartOf="@+id/car_brand_label"
                     app:layout_constraintTop_toBottomOf="@+id/car_brand_label">
@@ -135,7 +145,6 @@
                     android:layout_marginTop="20dp"
                     android:hint="@string/hintFuel"
                     android:visibility="gone"
-                    tools:visibility="visible"
                     app:layout_constraintEnd_toEndOf="@+id/car_cubic_capacity_label"
                     app:layout_constraintStart_toStartOf="@+id/car_cubic_capacity_label"
                     app:layout_constraintTop_toBottomOf="@+id/car_cubic_capacity_label">
@@ -172,7 +181,6 @@
                     android:layout_marginTop="20dp"
                     android:hint="@string/hintKm"
                     android:visibility="gone"
-                    tools:visibility="visible"
                     app:layout_constraintEnd_toEndOf="@+id/car_fuel_label"
                     app:layout_constraintStart_toStartOf="@+id/car_fuel_label"
                     app:layout_constraintTop_toBottomOf="@+id/car_fuel_label">
@@ -211,7 +219,6 @@
                     android:layout_marginTop="20dp"
                     android:hint="@string/hintDescription"
                     android:visibility="gone"
-                    tools:visibility="visible"
                     app:layout_constraintEnd_toEndOf="@+id/car_km_label"
                     app:layout_constraintStart_toStartOf="@+id/car_km_label"
                     app:layout_constraintTop_toBottomOf="@+id/car_km_label">
@@ -254,7 +261,7 @@
 
                     app:layout_constraintStart_toStartOf="@+id/car_description_label"
                     app:layout_constraintTop_toBottomOf="@+id/car_description_label"
-                    tools:visibility="visible">
+                    >
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/car_year"
@@ -310,6 +317,20 @@
                 />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/addImageCar"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                app:fabCustomSize="80dp"
+                android:src="@drawable/add_icon"
+                app:tint ="@color/white"
+                app:layout_constraintBottom_toTopOf="@id/confirmCar"
+                app:layout_constraintEnd_toEndOf="@+id/confirmCar"
+                app:layout_constraintStart_toStartOf="@+id/confirmCar"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone"
+                />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/editCar"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
@@ -319,7 +340,8 @@
                 app:layout_constraintBottom_toBottomOf="@id/deleteCar"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/deleteCar"
-                app:tint="@color/white" />
+                app:tint="@color/white"
+                />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/confirmCar"

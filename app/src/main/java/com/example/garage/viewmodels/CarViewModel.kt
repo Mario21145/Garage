@@ -2,6 +2,9 @@ package com.example.garage.viewmodels
 
 import android.app.Application
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
@@ -24,6 +27,10 @@ import com.example.garage.network.CarsApi
 import com.example.garage.workers.CarServiceRememberWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.net.URL
 
 class CarViewModel(private val carDao: CarDao) : ViewModel() {
 
@@ -35,11 +42,13 @@ class CarViewModel(private val carDao: CarDao) : ViewModel() {
     private val _carLogos = MutableLiveData<List<RemoteCarData>>()
     val carLogos: MutableLiveData<List<RemoteCarData>> = _carLogos
 
-    private val _carList = MutableLiveData<List<CarDb>>()
-    val carList: MutableLiveData<List<CarDb>> = _carList
+    val carList: LiveData<List<CarDb>> = carDao.getCars().asLiveData()
 
     private val _uptadedcar = MutableLiveData<List<CarDb>>()
     val updatedCar: MutableLiveData<List<CarDb>> = _uptadedcar
+
+    private val _isInternetAvailable = MutableLiveData<Boolean>()
+    val isInternetAvailable: LiveData<Boolean> = _isInternetAvailable
 
     val notifications: LiveData<List<NotificationDb>> = carDao.getNotifications().asLiveData()
 
@@ -69,17 +78,6 @@ class CarViewModel(private val carDao: CarDao) : ViewModel() {
     //CRUD OPERATIONS CARS
     fun insertCar(car : CarDb) {
         carDao.insertCar(car)
-    }
-
-    fun getCars() {
-        viewModelScope.launch(Dispatchers.Main) {
-            viewModelScope.launch(Dispatchers.IO) {
-                val cars = carDao.getCars()
-                viewModelScope.launch(Dispatchers.Main) {
-                    _carList.value = cars
-                }
-            }
-        }
     }
 
     fun deleteCar(car : CarDb){
@@ -112,8 +110,9 @@ class CarViewModel(private val carDao: CarDao) : ViewModel() {
 
 
 
-    // CRUD OPERATIONS NOTIFICATIONS
 
+
+    // CRUD OPERATIONS NOTIFICATIONS
     fun clearNotifications(){
         viewModelScope.launch(Dispatchers.IO) {
             carDao.deleteAllNotifications()
@@ -156,6 +155,68 @@ class CarViewModel(private val carDao: CarDao) : ViewModel() {
                 carDao.insertNotification(notification)
             }
     }
+
+    fun isInternetAvailable(context: Context) {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network)
+
+        if (activeNetwork != null) {
+            val isAvailable = when {
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                else -> false
+            }
+            _isInternetAvailable.postValue(isAvailable)
+        } else {
+            _isInternetAvailable.postValue(false)
+        }
+    }
+
+    fun urlToByteArray(imageUrl: String): ByteArray {
+            val url = URL(imageUrl)
+            val connection = url.openConnection()
+            connection.connect()
+
+            val input: InputStream = connection.getInputStream()
+            val output = ByteArrayOutputStream()
+
+            val buffer = ByteArray(4096)
+            var bytesRead: Int
+
+            try {
+                while (input.read(buffer).also { bytesRead = it } != -1) {
+                    output.write(buffer, 0, bytesRead)
+                }
+            } finally {
+                input.close()
+            }
+        return output.toByteArray()
+    }
+
+
+    fun uriToByteArray(context: Context, uri: Uri): ByteArray {
+        try {
+            val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+            val buffer = ByteArrayOutputStream()
+
+            inputStream?.use { input ->
+                val bufferSize = 4096
+                val byteArray = ByteArray(bufferSize)
+                var bytesRead: Int
+
+                while (input.read(byteArray, 0, bufferSize).also { bytesRead = it } != -1) {
+                    buffer.write(byteArray, 0, bytesRead)
+                }
+            }
+            return buffer.toByteArray()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return ByteArray(0)
+        }
+    }
+
+
 
     fun makeToast(context: Context, msg: String, duration: Int) {
         Toast.makeText(context, msg, duration).show()

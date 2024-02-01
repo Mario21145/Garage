@@ -15,5 +15,7 @@ data class CarDb(
     @ColumnInfo(name = "km") val km: String,
     @ColumnInfo(name = "description") val description: String,
     @ColumnInfo(name = "year") val year: String,
-    @ColumnInfo(name = "logo") val logo: String
+    @ColumnInfo(name = "logo") val logo: String,
+    @ColumnInfo(name = "imageLogo", typeAffinity = ColumnInfo.BLOB) val imageLogo: ByteArray?,
+    @ColumnInfo(name = "imageCar", typeAffinity = ColumnInfo.BLOB) val imageCar: ByteArray?
 )

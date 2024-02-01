@@ -28,4 +28,8 @@
 
     <string name="notificationDbTextDescription">Da fare il tagliando</string>
 
+    <string name="pickImage">Scegli un immagine</string>
+    <string name="back">indietro</string>
+    <string name="add">inserisci</string>
+
 </resources>

@@ -29,6 +29,10 @@
     <string name="notificationTextDescription">Some actions to do on: %1$s %2$s</string>
 
     <string name="notificationDbTextDescription">To do a car service</string>
-
+    
+    
+    <string name="pickImage">Pick an image</string>
+    <string name="back">back</string>
+    <string name="add">add</string>
 
 </resources>

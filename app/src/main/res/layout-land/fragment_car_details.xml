@@ -19,235 +19,284 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/containerSwitchers"
-                android:layout_width="400dp"
-                android:layout_height="350dp"
-                app:layout_constraintBottom_toTopOf="@id/carSection"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+            <ScrollView
+                android:id="@+id/infoSection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
-                android:textAlignment="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/carSection"
+                android:layout_marginBottom="20dp"
                 >
 
-                <TextView
-                    android:id="@+id/carBrandDetails"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:visibility="visible"
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/containerSwitchers"
+                    android:layout_width="400dp"
+                    android:layout_height="350dp"
+                    app:layout_constraintBottom_toTopOf="@id/carSection"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-
-                    tools:text="Ferrari" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/car_brand_label"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="170dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:hint="@string/hintCarModel"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/car_brand"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="text"
-                        android:singleLine="true"
-                        android:textStyle="bold" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <TextView
-                    android:id="@+id/carCubicCapacityDetails"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toEndOf="@+id/carBrandDetails"
-                    app:layout_constraintStart_toStartOf="@+id/carBrandDetails"
-                    app:layout_constraintTop_toBottomOf="@+id/carBrandDetails"
-                    tools:text="2500" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/car_cubic_capacity_label"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="170dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:hint="@string/hintCubicCapacity"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toEndOf="@+id/car_brand_label"
-                    app:layout_constraintTop_toTopOf="@+id/car_brand_label"
-                    app:layout_constraintBottom_toBottomOf="@+id/car_brand_label">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/car_cubic_capacity"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="numberDecimal"
-                        android:maxLength="5"
-                        android:singleLine="true"
-                        android:textStyle="bold" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <TextView
-                    android:id="@+id/carFuelDetails"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toEndOf="@+id/carCubicCapacityDetails"
-                    app:layout_constraintStart_toStartOf="@+id/carCubicCapacityDetails"
-                    app:layout_constraintTop_toBottomOf="@+id/carCubicCapacityDetails"
-                    tools:text="Petrol" />
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/car_fuel_label"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="170dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:hint="@string/hintFuel"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="@+id/car_brand_label"
-                    app:layout_constraintStart_toStartOf="@+id/car_brand_label"
-                    app:layout_constraintTop_toBottomOf="@+id/car_cubic_capacity_label">
-
-                    <AutoCompleteTextView
-                        android:id="@+id/filled_exposed_dropdown_fuel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <TextView
-                    android:id="@+id/carKmDetails"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="@+id/carFuelDetails"
-                    app:layout_constraintStart_toStartOf="@+id/carFuelDetails"
-                    app:layout_constraintTop_toBottomOf="@+id/carFuelDetails"
-                    tools:text="200" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/car_km_label"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="170dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:hint="@string/hintKm"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="@+id/car_cubic_capacity_label"
-                    app:layout_constraintStart_toStartOf="@+id/car_cubic_capacity_label"
-                    app:layout_constraintTop_toBottomOf="@+id/car_cubic_capacity_label"
-                  >
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/car_km"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="numberDecimal"
-                        android:maxLength="10"
-                        android:singleLine="true"
-                        android:textStyle="bold" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    android:id="@+id/carDescriptionDetails"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:layout_marginTop="20dp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="@+id/carYearDetails"
-                    app:layout_constraintEnd_toEndOf="@+id/carYearDetails"
-                    app:layout_constraintTop_toBottomOf="@+id/carYearDetails"
-                    tools:text="This is a description of the car" />
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/car_description_label"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="170dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:hint="@string/hintDescription"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="@+id/car_fuel_label"
-                    app:layout_constraintStart_toStartOf="@+id/car_fuel_label"
-                    app:layout_constraintTop_toBottomOf="@+id/car_km_label">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/car_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="textAutoComplete|textCapWords"
-                        android:singleLine="true"
-                        android:textStyle="bold" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <TextView
-                    android:id="@+id/carYearDetails"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:textAlignment="center"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toEndOf="@+id/carKmDetails"
-                    app:layout_constraintStart_toStartOf="@+id/carKmDetails"
-                    app:layout_constraintTop_toBottomOf="@+id/carKmDetails"
-                    tools:text="2022" />
+                    >
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/car_year_label"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="170dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:hint="@string/hintDescription"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="@+id/car_km_label"
-                    app:layout_constraintStart_toStartOf="@+id/car_km_label"
-                    app:layout_constraintTop_toBottomOf="@+id/car_km_label">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/car_year"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="textAutoComplete|textCapWords"
-                        android:singleLine="true"
-                        android:textStyle="bold" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <ImageView
+                        android:id="@+id/carImageElement"
+                        android:layout_width="wrap_content"
+                        android:layout_height="200dp"
+                        android:cropToPadding="true"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@drawable/icons8_image_64"
+                        />
 
 
+                    <TextView
+                        android:id="@+id/carBrandDetails"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:visibility="visible"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintEnd_toEndOf="@+id/carImageElement"
+                        app:layout_constraintStart_toStartOf="@+id/carImageElement"
+                        app:layout_constraintTop_toBottomOf="@id/carImageElement"
+                        tools:text="Ferrari"
+                        tools:visibility="gone"
+                        />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/car_brand_label"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="170dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:hint="@string/hintCarModel"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/carImageElement"
+                        tools:visibility="visible"
+                        >
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/car_brand"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:inputType="text"
+                            android:singleLine="true"
+                            android:textStyle="bold" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <TextView
+                        android:id="@+id/carCubicCapacityDetails"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintEnd_toEndOf="@+id/carBrandDetails"
+                        app:layout_constraintStart_toStartOf="@+id/carBrandDetails"
+                        app:layout_constraintTop_toBottomOf="@+id/carBrandDetails"
+                        tools:text="2500"
+                        tools:visibility="gone"
+                        />
+
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/car_cubic_capacity_label"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="170dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:hint="@string/hintCubicCapacity"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toEndOf="@+id/car_brand_label"
+                        app:layout_constraintTop_toTopOf="@+id/car_brand_label"
+                        app:layout_constraintBottom_toBottomOf="@+id/car_brand_label"
+                        tools:visibility="visible"
+                        >
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/car_cubic_capacity"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:inputType="numberDecimal"
+                            android:maxLength="5"
+                            android:singleLine="true"
+                            android:textStyle="bold" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <TextView
+                        android:id="@+id/carFuelDetails"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintEnd_toEndOf="@+id/carCubicCapacityDetails"
+                        app:layout_constraintStart_toStartOf="@+id/carCubicCapacityDetails"
+                        app:layout_constraintTop_toBottomOf="@+id/carCubicCapacityDetails"
+                        tools:text="Petrol"
+                        tools:visibility="gone"
+                        />
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/car_fuel_label"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="170dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="@string/hintFuel"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@+id/car_brand_label"
+                        app:layout_constraintStart_toStartOf="@+id/car_brand_label"
+                        app:layout_constraintTop_toBottomOf="@+id/car_cubic_capacity_label"
+                        tools:visibility="visible"
+                        >
+
+                        <AutoCompleteTextView
+                            android:id="@+id/filled_exposed_dropdown_fuel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <TextView
+                        android:id="@+id/carKmDetails"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/carFuelDetails"
+                        app:layout_constraintStart_toStartOf="@+id/carFuelDetails"
+                        app:layout_constraintTop_toBottomOf="@+id/carFuelDetails"
+                        tools:text="200"
+                        tools:visibility="gone"
+                        />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/car_km_label"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="170dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="@string/hintKm"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@+id/car_cubic_capacity_label"
+                        app:layout_constraintStart_toStartOf="@+id/car_cubic_capacity_label"
+                        app:layout_constraintTop_toBottomOf="@+id/car_cubic_capacity_label"
+                        tools:visibility="visible"
+                        >
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/car_km"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:inputType="numberDecimal"
+                            android:maxLength="10"
+                            android:singleLine="true"
+                            android:textStyle="bold" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/carDescriptionDetails"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:layout_marginTop="20dp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="@+id/carYearDetails"
+                        app:layout_constraintEnd_toEndOf="@+id/carYearDetails"
+                        app:layout_constraintTop_toBottomOf="@+id/carYearDetails"
+                        tools:text="This is a description of the car"
+                        tools:visibility="gone"
+                        />
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/car_description_label"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="170dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="@string/hintDescription"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@+id/car_fuel_label"
+                        app:layout_constraintStart_toStartOf="@+id/car_fuel_label"
+                        app:layout_constraintTop_toBottomOf="@+id/car_km_label"
+                        tools:visibility="visible"
+                        >
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/car_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:inputType="textAutoComplete|textCapWords"
+                            android:singleLine="true"
+                            android:textStyle="bold" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <TextView
+                        android:id="@+id/carYearDetails"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintEnd_toEndOf="@+id/carKmDetails"
+                        app:layout_constraintStart_toStartOf="@+id/carKmDetails"
+                        app:layout_constraintTop_toBottomOf="@+id/carKmDetails"
+                        tools:text="2022"
+                        tools:visibility="gone"
+                        />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/car_year_label"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="170dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="@string/hintDescription"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@+id/car_km_label"
+                        app:layout_constraintStart_toStartOf="@+id/car_km_label"
+                        app:layout_constraintTop_toBottomOf="@+id/car_km_label"
+                        tools:visibility="visible"
+                        >
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/car_year"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:inputType="textAutoComplete|textCapWords"
+                            android:singleLine="true"
+                            android:textStyle="bold" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </ScrollView>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/carSection"
@@ -309,6 +358,21 @@
                 app:layout_constraintBottom_toBottomOf="@+id/deleteCar"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_margin="10dp"
+                />
+
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/addImageCar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:fabCustomSize="50dp"
+                android:src="@drawable/add_icon"
+                app:tint ="@color/white"
+                app:layout_constraintBottom_toTopOf="@id/confirmCar"
+                app:layout_constraintEnd_toEndOf="@+id/confirmCar"
+                app:layout_constraintStart_toStartOf="@+id/confirmCar"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone"
                 />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton

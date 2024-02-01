@@ -64,7 +64,7 @@ class NotificationFragment : Fragment() {
 
 
         binding.backArrow.setOnClickListener{
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.action_notificationFragment_to_homeFragment)
         }
     }
 

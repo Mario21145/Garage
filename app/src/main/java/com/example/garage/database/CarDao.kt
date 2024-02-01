@@ -19,7 +19,7 @@ interface CarDao {
     fun insertCar(car: CarDb)
 
     @Query("SELECT * FROM cars")
-    fun getCars() : List<CarDb>
+    fun getCars() : Flow<List<CarDb>>
 
     @Query("SELECT * FROM cars WHERE model = :model")
     fun getCar(model : String) : CarDb

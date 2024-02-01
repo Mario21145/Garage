@@ -1,18 +1,26 @@
 package com.example.garage.ui
 
 import android.app.Application
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.NumberPicker
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.core.view.isNotEmpty
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -27,7 +35,12 @@ import com.example.garage.viewmodels.CarViewModel
 import com.example.garage.viewmodels.CarViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.net.URL
 import java.util.Calendar
+import kotlin.properties.Delegates
+import kotlin.io.readBytes
 
 class AddCarFragment : Fragment() {
 
@@ -38,13 +51,24 @@ class AddCarFragment : Fragment() {
     }
     private lateinit var binding: FragmentAddCarBinding
 
+    private lateinit var carBrand: String
+    private lateinit var carName: String
+    private lateinit var carCubicCapacity: String
+    private lateinit var carFuel: String
+    private lateinit var carKm: String
+    private lateinit var carDescription: String
+    private var currentYear by Delegates.notNull<Int>()
+    private var selectedYear: Int? = null
+    private lateinit var logo: String
+    private var imageCarGallery: Uri? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         setHasOptionsMenu(false)
         (activity as AppCompatActivity?)?.supportActionBar?.hide()
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_car, container, false)
         return binding.root
     }
@@ -52,108 +76,195 @@ class AddCarFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d("State" , "OnViewCreated")
-
-        binding.apply {
-            viewModel = sharedViewModel
-            lifecycleOwner = this@AddCarFragment
-        }
+            binding.apply {
+                viewModel = sharedViewModel
+                lifecycleOwner = this@AddCarFragment
+            }
 
         val dataSet = Dataset()
 
-        val adapterFuels = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            dataSet.typeFuels
-        )
-        binding.filledExposedDropdownFuel.setAdapter(adapterFuels)
+
 
         val carYear: NumberPicker = binding.carYear
-        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        selectedYear?.let {
+            currentYear = it
+        }
         carYear.minValue = currentYear - 50
         carYear.maxValue = currentYear
         val displayValues = Array(51) { (currentYear - 50 + it).toString() }
         carYear.displayedValues = displayValues
-        carYear.value = currentYear
 
-        //Text inputs
-        lateinit var carBrand : String
-        lateinit var carFuel : String
-        lateinit var logo : String
-        carBrand = ""
-        carFuel = ""
-        logo = ""
+        if (savedInstanceState != null) {
+            Log.d("State", "Stato e: $savedInstanceState")
+            carBrand = savedInstanceState.getString("selectedBrandPosition", "")
+            carName = savedInstanceState.getString("carName", "")
+            carCubicCapacity = savedInstanceState.getString("cubicCapacity", "")
+            carFuel = savedInstanceState.getString("selectedFuelPosition", "")
+            carKm = savedInstanceState.getString("carKm", "")
+            currentYear = savedInstanceState.getInt("selectedYear")
+            val carYear: NumberPicker = binding.carYear
+            carYear.value = currentYear
+            carDescription = savedInstanceState.getString("carDescription", "")
+            logo = savedInstanceState.getString("logo", "")
+            imageCarGallery = savedInstanceState.getString("carImageGallery" , "").toString().toUri()
+            binding.carImageFromGallery.visibility = View.VISIBLE
+            binding.carImageFromGallery.setImageURI(imageCarGallery)
 
-
-        val carModelLabel = binding.carNameLabel
-        var carName = carModelLabel.editText?.text
-
-        val dropdownBrand = binding.filledExposedDropdownBrand
-        sharedViewModel.carLogos.observe(viewLifecycleOwner) { carList ->
-            val adapterBrand = ArrayAdapter(
+            val adapterFuels = ArrayAdapter(
                 requireContext(),
                 android.R.layout.simple_spinner_dropdown_item,
-                carList.map { it.name }
+                dataSet.typeFuels
             )
-            binding.filledExposedDropdownBrand.setAdapter(adapterBrand)
+            binding.filledExposedDropdownFuel.setAdapter(adapterFuels)
 
-            binding.filledExposedDropdownBrand.setOnItemClickListener { _, _, position, _ ->
-                val selectedCar = carList[position]
-                logo = selectedCar.logo
-                carBrand = dropdownBrand.adapter.getItem(position).toString()
+            sharedViewModel.carLogos.observe(viewLifecycleOwner) { carList ->
+                val adapterBrand = ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    carList.map { it.name }
+                )
+
+                binding.filledExposedDropdownBrand.setAdapter(adapterBrand)
+            }
+
+        } else {
+            carBrand = ""
+            carName = ""
+            carCubicCapacity = ""
+            carFuel = ""
+            carKm = ""
+            carDescription = ""
+            logo = ""
+            imageCarGallery = null
+        }
+
+            val adapterFuels = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                dataSet.typeFuels
+            )
+            binding.filledExposedDropdownFuel.setAdapter(adapterFuels)
+
+
+            val dropdownBrand = binding.filledExposedDropdownBrand
+            sharedViewModel.carLogos.observe(viewLifecycleOwner) { carList ->
+
+                val adapterBrand = ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    carList.map { it.name }
+                )
+
+                binding.filledExposedDropdownBrand.setAdapter(adapterBrand)
+
+                binding.filledExposedDropdownBrand.setOnItemClickListener { _, _, position, _ ->
+                    val selectedCar = carList[position]
+                    logo = selectedCar.logo
+                    carBrand = dropdownBrand.adapter.getItem(position).toString()
+                }
+
+            }
+
+            val dropdownFuel = binding.filledExposedDropdownFuel
+            dropdownFuel.setOnItemClickListener { _, _, position, _ ->
+                carFuel = dropdownFuel.adapter.getItem(position).toString()
+            }
+
+
+        val imagePickerContract = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            if (uri != null) {
+                binding.carImageFromGallery.visibility = View.VISIBLE
+                binding.carImageFromGallery.setImageURI(uri)
+                imageCarGallery = uri
+                Log.d("Image", "Image setted")
             }
         }
 
-        val carCubicCapacityLabel = binding.carCubicCapacityLabel
-        val carCubicCapacity = carCubicCapacityLabel.editText?.text
-
-        val dropdownFuel = binding.filledExposedDropdownFuel
-        dropdownFuel.setOnItemClickListener { _, _, position, _ ->
-            carFuel = dropdownFuel.adapter.getItem(position).toString()
+        binding.carImage.setOnClickListener {
+            imagePickerContract.launch("image/*")
         }
 
-        val carKmLabel = binding.carKmLabel
-        val carKm = carKmLabel.editText?.text
-
-        val carDescriptionLabel = binding.carDescriptionLabel
-        val carDescription = carDescriptionLabel.editText?.text
-
-
         binding.backButton.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.action_addCarFragment_to_homeFragment)
         }
 
         binding.InsertButton.setOnClickListener {
+            carName = binding.carNameLabel.editText?.text.toString()
+            carCubicCapacity = binding.carCubicCapacityLabel.editText?.text.toString()
+            carKm = binding.carKmLabel.editText?.text.toString()
+            carDescription = binding.carDescriptionLabel.editText?.text.toString()
+            val carYear: NumberPicker = binding.carYear
+            currentYear = Calendar.getInstance().get(Calendar.YEAR)
+            selectedYear?.let {
+                currentYear = it
+            }
+            carYear.minValue = currentYear - 50
+            carYear.maxValue = currentYear
+            val displayValues = Array(51) { (currentYear - 50 + it).toString() }
+            carYear.displayedValues = displayValues
 
-            if(carName!!.isNotEmpty() && carBrand.isNotEmpty() && carCubicCapacity!!.isNotEmpty() && carFuel.isNotEmpty() && carKm!!.isNotEmpty() && carDescription!!.isNotEmpty() ){
+            if (carName.isNotEmpty() && carBrand.isNotEmpty() && carCubicCapacity.isNotEmpty() && carFuel.isNotEmpty() && carKm.isNotEmpty() && carDescription.isNotEmpty() && imageCarGallery != null) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val car = CarDb(null ,carName.toString() , carBrand , carCubicCapacity.toString() , carFuel , carKm.toString() , carDescription.toString() , currentYear.toString() , logo)
+                    val car = CarDb(
+                        null,
+                        carName,
+                        carBrand,
+                        carCubicCapacity,
+                        carFuel,
+                        carKm,
+                        carDescription,
+                        carYear.value.toString(),
+                        logo,
+                        sharedViewModel.urlToByteArray(logo),
+                        imageCarGallery?.let { it1 ->
+                            sharedViewModel.uriToByteArray(requireContext() ,
+                                it1
+                            )
+                        },
+                    )
                     sharedViewModel.insertCar(car)
                 }
                 findNavController().navigate(R.id.action_addCarFragment_to_homeFragment)
             } else {
-                context?.let { it1 -> sharedViewModel.makeToast(it1, getString(R.string.toastErrorFieldEmpty) , 30 ) }
+                Log.d("Data" ,"${carName} , ${carBrand} ,${carCubicCapacity} , ${carFuel} , ${carKm} ,${carDescription}" )
+                context?.let { it1 ->
+                    sharedViewModel.makeToast(
+                        it1,
+                        getString(R.string.toastErrorFieldEmpty),
+                        30
+                    )
+                }
             }
         }
 
         //Icons dark Mode
         val isDarkTheme = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-        if(isDarkTheme){
+        if (isDarkTheme) {
             binding.carModelIcon.setColorFilter(Color.argb(255, 255, 255, 255))
             binding.cubicCapacityIcon.setColorFilter(Color.argb(255, 255, 255, 255))
             binding.carFuelIcon.setColorFilter(Color.argb(255, 255, 255, 255))
             binding.carKmIcon.setColorFilter(Color.argb(255, 255, 255, 255))
             binding.CarDescriptionIcon.setColorFilter(Color.argb(255, 255, 255, 255))
             binding.CarYearIcon.setColorFilter(Color.argb(255, 255, 255, 255))
+            binding.CarImageIcon?.setColorFilter(Color.argb(255, 255, 255, 255))
         }
-
     }
 
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d("State", "Stato e: $outState")
+        if (::binding.isInitialized) {
+            outState.putString("carName", binding.carNameLabel.editText?.text.toString())
+            outState.putString("cubicCapacity", binding.carCubicCapacityLabel.editText?.text.toString())
+            outState.putString("carKm", binding.carKmLabel.editText?.text.toString())
+            outState.putString("carDescription", binding.carDescriptionLabel.editText?.text.toString())
+            outState.putString("selectedFuelPosition", carFuel)
+            outState.putString("selectedBrandPosition", carBrand)
+            outState.putString("logo", logo)
+            val carYearSaved: NumberPicker = binding.carYear
+            outState.putInt("selectedYear", carYearSaved.value)
+            outState.putString("carImageGallery" , imageCarGallery.toString())
+        }
     }
-
 }
