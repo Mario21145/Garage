@@ -2,6 +2,7 @@ package com.example.garage.ui
 
 import android.app.Application
 import android.content.ContentValues
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -41,6 +42,7 @@ import kotlinx.coroutines.withContext
 import java.io.BufferedOutputStream
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.FileOutputStream
 
 
@@ -56,7 +58,6 @@ class CarDetailsFragment : Fragment() {
     private val imagePickerContract = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri != null) {
             val compressedBitmap = compressAndResizeImage(uri)
-
             val imageUri = bitmapToUri(compressedBitmap)
             binding.carImageElement.setImageURI(imageUri)
             if (imageUri != null) {
@@ -320,31 +321,18 @@ class CarDetailsFragment : Fragment() {
     }
 
 
-    private fun bitmapToUri(bitmap: Bitmap): Uri? {
+    private fun  bitmapToUri(inImage: Bitmap): Uri {
+
+        val tempFile = File.createTempFile("temprentpk", ".png")
         val bytes = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bytes)
-        val byteArray = bytes.toByteArray()
+        inImage.compress(Bitmap.CompressFormat.PNG, 100, bytes)
+        val bitmapData = bytes.toByteArray()
 
-        val contentResolver = requireContext().contentResolver
-        val uri = contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            ContentValues().apply {
-                put(MediaStore.Images.Media.DISPLAY_NAME, "Image")
-                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            }
-        )
-
-        if (uri == null) {
-            return null
-        }
-
-        val parcelFileDescriptor = contentResolver.openFileDescriptor(uri, "w") ?: return null
-        val fileDescriptor = parcelFileDescriptor.fileDescriptor
-        val bos = BufferedOutputStream(FileOutputStream(fileDescriptor))
-        bos.write(byteArray)
-        bos.close()
-        parcelFileDescriptor.close()
-        return uri
+        val fileOutPut = FileOutputStream(tempFile)
+        fileOutPut.write(bitmapData)
+        fileOutPut.flush()
+        fileOutPut.close()
+        return Uri.fromFile(tempFile)
     }
 
 }
